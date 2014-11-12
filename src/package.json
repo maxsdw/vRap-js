@@ -1,0 +1,10 @@
+{
+  "name": "vRap-Framework",
+  "description": "Source files compilation",
+  "version": "1.0.0",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-uglify": "~0.5.0",
+    "grunt-contrib-watch" : "~0.6.1"
+  }
+}
