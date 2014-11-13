@@ -13,6 +13,9 @@ lib-cov
 # Coverage directory used by tools like istanbul
 coverage
 
+# Reports directory
+reports
+
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
@@ -26,3 +29,6 @@ node_modules
 
 # Users Environment Variables
 .lock-wscript
+
+# Mac OS hidden storage files
+.DS_Store
