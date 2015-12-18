@@ -1,7 +1,7 @@
-/* @preserve vRap.js JavaScript Framework v1.0.0 | Based on jQuery 2.1.1 | https://github.com/maxsdw/vRap-js | (c) 2014, Jonathan Mauricio Sánchez Sanabria | Released under the MIT license */
+/* @preserve vRap.js JavaScript Framework v1.0.0 | Based on jQuery 2+ | https://github.com/maxsdw/vRap-js | (c) 2014, Jonathan Mauricio Sánchez Sanabria | Released under the MIT license */
 
 /**
- * Release Date: 25-08-2014
+ * Release Date: 2-12-2015
  */
 
 // vRap Framework
@@ -17,10 +17,12 @@
         Query: {
         	getApp: function( appName ) {
 				var appObj = vRap.Apps[ appName ];
+
 				if ( appObj ) {
 					return appObj;
 				} else {
-					vRap.Msg.alert( 'No app instance', 'vRap could not find the App instance, create it using the method vRap.newApp()' );
+					vRap.Msg.alert( vRap.Locale.alertMessages.noApp );
+					
 					return false;
 				}
 			},
@@ -28,74 +30,69 @@
 			getClass: function( namespace ) {
 	        	var subnames = namespace.split('.'),
 	        		route = vRap.Classes;
-	        	try {
-				    $.each( subnames, function( index, item ) {
-		        		route = route[ item ];
-		        	});
-		        	return route;
-				}
-				catch ( err ) {
-					vRap.Msg.alert( 'No namespace', 'Bad namespace specification or namespace doesn\'t exist' );
-				    return;
-				}
+
+			    $.each( subnames, function( index, item ) {
+	        		route = route[ item ];
+	        	});
+
+	        	if ( route ) {
+	        		return route;
+	        	} else {
+	        		vRap.Msg.alert( vRap.Locale.alertMessages.noNamespace + ' | ' + namespace );
+
+	        		return false;
+	        	}
 	        },
 
-			getObj: function( alias ) {
-				var app,
-					instanceFound = false;
-				app = this.getApp( vRap.Properties.activeApp );
-				$.each( app.objManager, function( name, value ) {
-					var instance = app.objManager[ name ][ alias ];
-					if ( instance ) {
-						instanceFound = instance;
-					}
-				});
-				return instanceFound;
-			},
+	        getObj: function( objNamespace ) {
+		        var app,
+		            route,
+		            splitNamespace;
 
-			getObjsByClass: function( className ) {
-				var app,
-					grouper = false;
-				app = this.getApp( vRap.Properties.activeApp );
-				$.each( app.objManager, function( name, value ) {
-					if ( name === className ) {
-						grouper = app.objManager[ name ];
-					}
-				});
-				return grouper;
-			},
+		        app = this.getApp( vRap.Properties.activeApp );
+		        route = app.objManager;
 
-			getStore: function( identifier ) {
+		        splitNamespace = objNamespace.split('.');
+
+		        $.each( splitNamespace, function( index, item ) {
+		        	if ( route ) {
+		        		route = route[ item ];
+		        	} else {
+		        		vRap.Msg.alert( vRap.Locale.alertMessages.noObject + ' | ' + objNamespace );
+
+		        		return false;
+		        	}
+		        });
+
+		        return route;
+		    },
+
+			getObjsByClass: function( classNamespace ) {
 				var app,
-					instanceFound = false;
+					iterator,
+					objectsArray = [];
+
 				app = this.getApp( vRap.Properties.activeApp );
-				if ( app.objManager.Store ) {
-					$.each( app.objManager.Store, function( name, object ) {
-						if ( object.storeId === identifier || name === identifier ) {
-							instanceFound = object;
+
+				iterator = function( route ) {
+					$.each( route, function( key, value ) {
+						if ( !value._classNamespace ) {
+							iterator( value );
+						} else {
+							if ( value._classNamespace === classNamespace ) {
+								objectsArray.push( value );
+							}
 						}
 					});
 				}
-				return instanceFound;
+
+				iterator( app.objManager );
+
+				return objectsArray;
 			},
 
 	        getEvents: function( domEl ) {
 		    	return $._data( domEl, "events" );
-		    },
-
-		    getNodeFromXpath: function( xPath, root ) {
-		        var nodesArr = xPath.split('/'),
-		            node = root;
-		        $.each( nodesArr, function( index, item ) {
-		            var childType,
-		                childIndex;
-		            if ( index > 0 ) {
-		                childType = item.split('[')[ 0 ];
-		                childIndex = item.match(/[^[\]]+(?=])/g)[ 0 ];
-		                node = $( node.children( childType )[ childIndex - 1 ] );
-		            }
-		        });
-		        return node;
 		    }
         },
         Generators: {
@@ -106,205 +103,286 @@
         },
         Actions: {
         	newApp: function( properties ) {
+        		var deferred = new $.Deferred();
+
 	        	if ( $.type( properties.appName ) !== 'string' ) {
 	        		properties.appName = String( properties.appName );
 	        	}
+
 	        	vRap.Apps[ properties.appName ] = {
-	        		objManager: {}
+	        		objManager: {},
+	        		references: {
+	        			controllers: {},
+	        			usedAlias: []
+	        		}
 	        	};
+
 	        	vRap.Properties.activeApp = properties.appName;
-	        	return properties.appName;
+
+	        	deferred.resolve();
+
+	        	return vRap.Apps[ properties.appName ];
 	        },
 
 	        switchApp: function( appName ) {
 				var appObj = vRap.Apps[ appName ];
+
 				if ( appObj ) {
 					vRap.Properties.activeApp = appName;
 				} else {
-					vRap.Msg.alert( 'No app instance', 'vRap could not find any App named as "' + appName + '", create it using the method vRap.newApp()' );
+					vRap.Msg.alert( vRap.Locale.alertMessages.noApp + ' | ' + appName );
 					return false;
 				}
 			},
 
-        	define: function( namespace, classBody ) {
-	        	var parentClass,
-		        	childClass,
-	        		subnames = namespace.split('.'),
-	        		route = vRap.Classes;
-	        	if ( classBody.extend ) {
-	    			parentClass = vRap.Query.getClass( classBody.extend );
+		    define: function( namespace, API, statics ) {
+		        var parentClass,
+		            childClass,
+		            subnames = namespace.split('.'),
+		            route = vRap.Classes,
+		            objectKey;
+
+		        if ( API.extend ) {
+	    			parentClass = vRap.Query.getClass( API.extend );
+
+	    			API._extend = API.extend;
+
+	    			delete API.extend;
 	    		}
-	        	$.each( subnames, function( index, item ) {
-	        		if ( index < ( subnames.length - 1 ) ) {
-	        			if ( route[ item ] === undefined ) {
-	        				route[ item ] = {};
-	        			}
-	        		} else {
-	        			route[ item ] = function( properties, callback ) {
-	        				var privateProperties = classBody.privateProperties,
-	        					callback = callback,
-	        					className;
+		        
+		        $.each( subnames, function( index, item ) {
+		            if ( index < ( subnames.length - 1 ) ) {
+		                if ( !route[ item ] ) {
+		                    route[ item ] = {};
+		                }
+		            } else {
+		                route[ item ] = function( properties ) {
+		                    var scope = this;
 
-	        				// Calling the superClass constructor
-	        				if ( parentClass ) {
-				    			parentClass.call( this );
-				    		}
+		                    // Calling the superClass constructor
+		                    if ( parentClass ) {
+		                        parentClass.call( scope );
+		                    }
 
-				    		// Declaring private methods
-				    		function privateMethods() {
-				    			return classBody.privateMethods;
-				    		};
+		                    // Setting default properties
+		                    scope.observerList = [];
+		                    scope.linked = {};
+		                    scope.properties = { booted: false, initialized: false };
+		                    scope.properties = $.extend( scope.properties, {} );
 
-				    		// Privileged methods definition
-	        				this.propGet = function( name ) {
-	        					return privateProperties[ name ];
-	        				};
-	        				this.propSet = function( name, value ) {
-	        					privateProperties[ name ] = value;
-	        					return privateProperties[ name ];
-	        				};
-	        				this.runMethod = function( name ) {
-	        					var methodArgumens = $.makeArray( arguments ).slice( 1 );
-	        					methodArgumens.unshift( privateProperties );
-	        					return privateMethods()[ name ].apply( this, methodArgumens );
-	        				};
-	        				this.getCallback = function( name, value ) {
-	        					return callback;
-	        				};
+		                	// Setting class name
+		                    scope._classNamespace = namespace;
 
-	        				// Setting general properties
-	        				if ( subnames[ 0 ] === 'Base' && subnames[ 1 ] !== 'primitives' ) {
-	        					className = item.toLowerCase();
-	        					this.className = item;
-	        					this.type = className;
-	        					this.id = 'vRap_' + className + '_' + vRap.Generators.genIdNumber();
-	        				}
+		                    // Adding API properties
+		                    $.each( API, function( key, value ) {
+		                        if ( !$.isFunction( API[ key ] ) ) {
+		                            if ( key === 'properties' ) {
+		                                $.extend( scope.properties,  API[ key ] );
+		                            } else {
+		                                scope[ key ] = value;
+		                            }
+		                        }
+		                    });
 
-	        				// Extending properties
-	        				$.extend( this, classBody.publicProperties );
-	        				$.extend( this, properties );
-	        			};
-	        		}
-	        		route = route[ item ];
-	        	});
-	        	childClass = route;
-	        	if ( parentClass ) {
-	    			childClass.prototype = Object.create( parentClass.prototype );
-	    			childClass.prototype.constructor = childClass;
-	    		}
-	    		if ( classBody.publicMethods ) {
-	    			$.each( classBody.publicMethods, function( name, value ) {
-		        		childClass.prototype[ name ] = value;
+		                    for ( objectKey in properties ) {
+		                    	if ( $.type( properties[ objectKey ] ) === 'function' ) {
+		                    		scope[ objectKey ] = properties[ objectKey ];
+		                    	} else {
+		                    		scope.properties[ objectKey ] = properties[ objectKey ];
+		                    	}
+		                    }
+		                };
+		            }
+
+		            route = route[ item ];
+		        });
+
+		        childClass = route;
+
+		        // Extending from ancestor
+		        if ( parentClass ) {
+		            childClass.prototype = Object.create( parentClass.prototype );
+		            childClass.prototype.constructor = childClass;
+		        }
+
+		        // Adding methods
+		        $.each( API, function( key, value ) {
+		            if ( $.isFunction( API[ key ] ) ) {
+		                childClass.prototype[ key ] = value;
+		            }
+		        });
+
+		        // Adding statics
+		        if ( !$.isEmptyObject( statics ) ) {
+		            $.each( statics, function( key, value ) {
+		                childClass[ key ] = value;
+		            });
+		        }
+		    },
+
+		    create: function( classNamespace , objNamespace, properties ) {
+		        var self = this,
+		        	app,
+		        	deferred = new $.Deferred(),
+		            classContructor,
+		            subnames,
+		            route;
+
+		        if ( $.type( classNamespace ) === 'object' && classNamespace.instances || classNamespace.interfaces ) {
+		        	$.when( self._classIterator( classNamespace ) ).done(function() {
+		        		deferred.resolve();
 		        	});
-	    		}
-	        	if ( classBody.staticProperties || classBody.staticMethods ) {
-	        		$.each( $.extend( classBody.staticProperties, classBody.staticMethods ), function( name, value ) {
-		        		childClass[ name ] = value;
-		        	});
-	        	}
-	        },
+		        } else {
+		        	classContructor = vRap.Query.getClass( classNamespace );
 
-	        create: function( classNamespace , alias, properties, callback ) {
-	        	var classContructor,
-	        		app,
-	        		splitNamespace,
-	        		group,
-	        		instance;
-	        	classContructor = vRap.Query.getClass( classNamespace );
-	        	if ( classContructor ) {
-	        		app = vRap.Query.getApp( vRap.Properties.activeApp );
-	        		prevInstance = vRap.Query.getObj( alias );
-	        		if ( app ) {
-	        			if ( !prevInstance ) {
-	        				splitNamespace = classNamespace.split('.');
-	        				lastSplitItem = splitNamespace[ splitNamespace.length - 1 ];
-		        			group = app.objManager[ lastSplitItem ];
-		        			if ( !group ) {
-		        				group = app.objManager[ lastSplitItem ] = {};
-		        			}
-		        			instance = group[ alias ] = new classContructor( properties, callback );
-		        			instance.alias = alias;
-		        			if ( instance.init ) {
-		        				instance.init();
-		        			} else {
-		        				vRap.Msg.alert( 'No init method', 'The object constructor for "' + alias + '" does not contain an init() method.' );
-		        			}
-	        			} else {
-	        				vRap.Msg.alert( 'Duplicated object', 'An object with the alias "' + alias + '" already exists' );
-	        			}
-	        		} else {
-	        			vRap.Msg.alert( 'No active app', 'There is no active App' );
-	        		}
-	        	} else {
-	        		vRap.Msg.alert( 'Class doesn\'t exist', 'The class "' + classNamespace + '" doesn\'t exist.' );
-	        	}
-			},
+			        if ( classContructor ) {
+			        	app = vRap.Query.getApp( vRap.Properties.activeApp );
 
-			destroy: function( alias, callback ) {
-				var $this = this,
-					app = vRap.Query.getApp( vRap.Properties.activeApp ),
-					object = vRap.Query.getObj( alias ),
-					store = vRap.Query.getStore( alias ),
-					domEl;
-				if ( object ) {
-					delete app.objManager[ object.className ][ alias ];
-					domEl = object.domEl;
-					if ( domEl.length > 0 ) {
-						domEl.fadeOut(function() {
-							domEl.remove();
-							domEl.trigger('destroy');
-						});
-					}
-					if ( object.items ) {
-						if ( $.isArray( object.items ) ) {
-							$.each( object.items, function( index, item ) {
-								$this.destroy( item.alias );
-							});
-						}
-					}
-				} else if ( store ) {
-					delete app.objManager.Store[ store.alias ];
-				}
-				if ( callback ) {
-					callback();
-				}
-			},
+			        	if ( app ) {
+				            subnames = objNamespace.split('.');
+				            route = app.objManager;
 
-			destroyByType: function( className ) {
-				var $this = this;
-				$.each( vRap.Query.getObjsByClass( className ), function( index, item ) {
-					$this.destroy( item.alias );
+				            $.each( subnames, function( index, item ) {
+				                if ( index < ( subnames.length - 1 ) ) {
+				                    if ( !route[ item ] ) {
+				                        route[ item ] = {};
+				                    }
+				                } else {
+				                    route[ item ] = new classContructor( properties );
+				                }
+
+				                route = route[ item ];
+				            });
+
+				            route._objectNamespace = objNamespace;
+				            route.properties.id = 'vRap_' + objNamespace.toLowerCase().replace( /\./g, '_' ) + '_' + vRap.Generators.genIdNumber();
+
+				            if ( route.properties.alias ) {
+				            	if ( app.references.usedAlias.indexOf( route.properties.alias ) < 0) {
+				            		app.references.usedAlias.push( route.properties.alias );
+				            	} else {
+				            		vRap.Msg.alert( vRap.Locale.alertMessages.duplicatedAlias + ' | Object: ' + objNamespace + ' | Alias: ' + route.properties.alias );
+				            	}
+				            }
+
+				            $.when( route._boot() ).done(function() {
+				            	route.properties.booted = true;
+
+			            		if ( route.init ) {
+					                $.when( route.init() ).done(function( response ) {
+					                	route.properties.initialized = true;
+
+					                    deferred.resolve( route, response );
+					                });
+					            } else {
+					            	vRap.Msg.alert( vRap.Locale.alertMessages.noInit+ ' | ' + objNamespace );
+					            }
+				            });
+			        	}
+			        }
+		        }
+
+		        return deferred.promise();
+		    },
+
+		    destroy: function( objNamespace ) {
+		        var deferred = new $.Deferred(),
+		            app,
+		            object,
+		            splitNamespace,
+		            iterator,
+		            i = 0;
+
+		        app = vRap.Query.getApp( vRap.Properties.activeApp );
+		        object = vRap.Query.getObj( objNamespace );
+		        splitNamespace = objNamespace.split('.');
+
+		        iterator = function( route, subname ) {
+		        	if ( route[ subname ]._objectNamespace &&  route[ subname ]._objectNamespace === objNamespace ) {
+		        		route[ subname ] = null;
+
+		        		delete route[ subname ];
+
+		        		deferred.resolve();
+		        	} else {
+		        		iterator( route[ subname ], splitNamespace[ i += 1 ] );
+		        	}
+		        };
+
+		        if ( object ) {
+		            if ( object.properties.domEl ) {
+		                object.properties.domEl.remove();
+		            }
+
+		            iterator( app.objManager, splitNamespace[ i ] );
+		        } else {
+		        	deferred.resolve();
+		        }
+
+		        return deferred.promise();
+		    },
+
+			destroyByClass: function( classNamespace ) {
+				$.each( vRap.Query.getObjsByClass( classNamespace ), function( index, item ) {
+					vRap.destroy( item._objectNamespace );
 				});
 			},
 
 			addCustomListener: function( properties ) {
 				var objDomEl = vRap.Query.getObj( properties.component ).domEl;
+
 				objDomEl.off( properties.eventType );
 				objDomEl.on( properties.eventType, properties.method );
 			},
 
-			capitalizeFirstChar: function( string ) {
-				return string.charAt( 0 ).toUpperCase() + string.slice( 1 );
-			},
+			_classIterator: function( directive ) {
+		    	var self = this,
+		    		deferred = new $.Deferred(),
+		    		iterator,
+		    		iCounter = 0,
+		    		instancesDone = false,
+		        	insterfacesDone = false;
 
-			clearTextSelection: function() {
-				if ( window.getSelection ) {
-					if ( window.getSelection().empty ) {
-						window.getSelection().empty();
-					} else if ( window.getSelection().removeAllRanges ) {
-						window.getSelection().removeAllRanges();
-					}
-				} else if ( document.selection ) {
-					document.selection.empty();
-				}
-			}
+		        iterator = function( objsArray, type ) {
+		        	var item;
+
+		        	if ( objsArray && objsArray.length > 0 && objsArray.length > iCounter ) {
+		        		item = objsArray[ iCounter ];
+
+		        		$.when( vRap.Actions.create( item.class, item.namespace, item.properties ) ).done(function() {
+		        			iCounter += 1;
+
+		        			iterator( objsArray, type );
+			            });
+		        	} else {
+		        		if ( type === 'instances' ) {
+		        			instancesDone = true;
+		        		} else if ( type === 'interfaces' ) {
+		        			insterfacesDone = true;
+		        		}
+
+		        		if ( !insterfacesDone ) {
+		        			iCounter = 0;
+
+		        			iterator( directive.interfaces, 'interfaces' );
+		        		} else {
+		        			deferred.resolve();
+		        		}
+		        	}
+		        };
+
+		        iterator( directive.instances, 'instances' );
+
+	        	return deferred.promise();
+		    }
         },
 	    Msg: {
-	    	alert: function( title, message ) {
-	    		console.log( title, message );
+	    	alert: function( message ) {
+	    		console.log( '%c ' + message, 'color: red' );
 		    },
 	    }
 	}
+
 	if ( !window.vRap ) {
 		window.vRap = framework;
 	}

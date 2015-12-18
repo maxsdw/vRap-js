@@ -9,12 +9,23 @@ module.exports = function ( grunt ) {
                 files: {
                     'vrap-js-1.0.0.min.js': [
                         'packages/framework.js',
-                        'packages/classes/primitives/*.js',
-                        'packages/classes/widgets/*.js',
-                        'packages/classes/model/*.js'
+                        'packages/locale/eng-us.js',
+                        'packages/**/*.js'
                     ]
                 }
             }
+        },
+        jshint: {
+            options: {
+                curly: true,
+                eqeqeq: true,
+                eqnull: true,
+                browser: true,
+                globals: {
+                    jQuery: true
+                }
+            },
+            src: [ 'packages/**/*.js' ]
         },
         watch: {
             js:  { files: 'packages/**/*.js', tasks: [ 'uglify' ] }
