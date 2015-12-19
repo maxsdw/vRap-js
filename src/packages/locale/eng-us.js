@@ -13,4 +13,4 @@ vRap.Locale = {
 		noAlias: "Controllers and all referenced instances inside them must include an alias",
 		duplicatedAlias: "The alias asigned to this object already exists, please pick a different one"
 	}
-}
+};

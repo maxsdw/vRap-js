@@ -31,7 +31,7 @@ vRap.Actions.define( 'Base.primitives.Controller', (function() {
 
 	    					deferred.resolve();
 	    				});
-	    			})
+	    			});
 	    		});
     		} else {
     			vRap.Msg.alert( localeText.noAlias + ' | ' + self._objectNamespace );

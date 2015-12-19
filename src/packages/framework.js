@@ -84,7 +84,7 @@
 							}
 						}
 					});
-				}
+				};
 
 				iterator( app.objManager );
 
@@ -381,7 +381,7 @@
 	    		console.log( '%c ' + message, 'color: red' );
 		    },
 	    }
-	}
+	};
 
 	if ( !window.vRap ) {
 		window.vRap = framework;

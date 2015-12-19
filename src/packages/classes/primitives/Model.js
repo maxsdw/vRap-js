@@ -60,7 +60,7 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
                             self._updateModel( action, ( dataObj ) ? $.extend( dataObj, data ) : data );
                         });
 
-                    return callObject
+                    return callObject;
                 } else {
                     return self._updateModel( action, dataObj );
                 }

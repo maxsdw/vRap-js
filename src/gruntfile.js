@@ -28,12 +28,13 @@ module.exports = function ( grunt ) {
             src: [ 'packages/**/*.js' ]
         },
         watch: {
-            js:  { files: 'packages/**/*.js', tasks: [ 'uglify' ] }
+            js:  { files: 'packages/**/*.js', tasks: [ 'jshint', 'uglify' ] }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
 
-    grunt.registerTask('default', [ 'uglify' ]);
+    grunt.registerTask( 'default', [ 'jshint', 'uglify' ] );
 };
