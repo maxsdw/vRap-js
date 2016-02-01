@@ -927,7 +927,7 @@ Here is an example of interfaces usage:
                                 
                                 // Subscriptions
                                 
-                                moduleA.subscribe(function( eventName ) 
+                                moduleA.subscribe(function( eventName ) {
                                         if ( eventName === 'initElement' ) {
                                                 self.initList();
                                         } else if ( eventName === 'hideElement' ) {
