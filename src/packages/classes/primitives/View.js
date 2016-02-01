@@ -107,8 +107,8 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
                     eventName = key.substr( 0, key.indexOf(' ') );
                     selector = key.substr( key.indexOf(' ') + 1 );
 
-                    self.properties.domEl.on( eventName, selector, function() {
-                        self[  methodName ]( $( this ), methodName );
+                    self.properties.domEl.on( eventName, selector, function( e ) {
+                        self[  methodName ]( $( this ), methodName, e );
                     });
                 });
             }
