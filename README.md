@@ -505,7 +505,7 @@ In order to create an event handler for a specific user interaction, vRap provid
                         init: function( callback ) {
                                 ...
                         },
-                        addRecord: function( event ) {
+                        addRecord: function( element, methodName, event ) {
                                 ...
                         },
                         refresh: function() {
@@ -593,7 +593,7 @@ Now, we have to define our view inside **"view.js"** file:
                                 self.gridBody.empty();
                                 self.gridBody.html( template.render( { users: self.linked.model.properties.data } ) );
                         },
-                        addRecord: function( event ) {
+                        addRecord: function( element ) {
                                 this.form = this.properties.domEl.find('form');
                         },
                         refresh: function() {
@@ -634,7 +634,7 @@ In the previous example we used jsRender templating library, but feel free to us
                                 self.gridBody.empty();
                                 self.gridBody.html( template.render( { users: self.linked.model.properties.data } ) );
                         },
-                        addRecord: function( event ) {
+                        addRecord: function( element ) {
                                 this.form = this.properties.domEl.find('form');
                         },
                         refresh: function() {
@@ -791,7 +791,7 @@ In the next example we'll create a module for the users administration grid:
                                 self.properties.gridBody.empty();
                                 self.properties.gridBody.html( template.render( { users: self.linked.model.properties.data } ) );
                         },
-                        addRecord: function( event ) {
+                        addRecord: function( element ) {
                                 this.properties.form = this.properties.domEl.find('form');
                                 this.emit('addBtnClicked');
                         },
@@ -836,10 +836,10 @@ Here is an example of interfaces usage:
                         init: function() {
                                 ...
                         },
-                        onShowList: function( event ) {
+                        onShowList: function( element ) {
                                 this.emit('showListBtnClicked'); // Emits a generic event
                         },
-                        onHideList: function( event ) {
+                        onHideList: function( element ) {
                                 this.emit('hideListBtnClicked'); // Emits a generic event
                         },
                         refresh: function() {
