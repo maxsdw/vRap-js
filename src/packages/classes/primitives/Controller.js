@@ -95,29 +95,45 @@ vRap.Actions.define( 'Base.primitives.Controller', (function() {
     			completedInstances = 0;
 
     		if ( definitionObj && !$.isEmptyObject( definitionObj ) ) {
-    			$.each( definitionObj, function( key, configObj ) {
-	    			var namespace  = $.extend( {}, configObj ).namespace;
+                if ( $.type( definitionObj ) === 'array' ) {
+                    $.each( definitionObj, function( index, item ) {
+                        var object = vRap.Query.getObj( item );
 
-	    			delete configObj.namespace;
+                        if ( object ) {
+                            if ( object.properties.alias ) {
+                                self.linked[ linkedTo ][ object.properties.alias ] = object;
+                            } else {
+                                vRap.Msg.alert( localeText.noAlias + ' | ' + object._objectNamespace );
+                            }   
+                        }
+                    });
 
-	    			if ( configObj.domEl ) {
-	    				configObj.domEl = $( configObj.domEl.selector );
-	    			}
+                    deferred.resolve();
+                } else {
+                    $.each( definitionObj, function( key, configObj ) {
+                        var namespace  = $.extend( {}, configObj ).namespace;
 
-	    			$.when( vRap.Actions.create( key, namespace, configObj ) ).done(function( object ) {
-	    				completedInstances += 1;
+                        delete configObj.namespace;
 
-	    				if ( configObj.alias ) {
-	    					self.linked[ linkedTo ][ configObj.alias ] = object;
+                        if ( configObj.domEl ) {
+                            configObj.domEl = $( configObj.domEl.selector );
+                        }
 
-		    				if ( Object.keys( self.config.views ).length === completedInstances ) {
-		    					deferred.resolve();
-		    				}
-	    				} else {
-	    					vRap.Msg.alert( localeText.noAlias + ' | ' + object._objectNamespace );
-	    				}
-	    			});
-	    		});
+                        $.when( vRap.Actions.create( key, namespace, configObj ) ).done(function( object ) {
+                            completedInstances += 1;
+
+                            if ( configObj.alias ) {
+                                self.linked[ linkedTo ][ configObj.alias ] = object;
+
+                                if ( Object.keys( self.config.views ).length === completedInstances ) {
+                                    deferred.resolve();
+                                }
+                            } else {
+                                vRap.Msg.alert( localeText.noAlias + ' | ' + object._objectNamespace );
+                            }
+                        });
+                    });
+                }
     		} else {
     			deferred.resolve();
     		}
