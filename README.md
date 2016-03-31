@@ -973,7 +973,7 @@ Normally an application will be composed by several modules, some times you will
                 $('button#showList').trigger('click');
         });
 
-The instantiation process is synchronous, so the instances will be created in the order specified by you inside the configuration object, after all the instances have been created, the interfaces will be instantiated, and at the end of the whole process, the callback function is fired.
+By default, the instantiation process is synchronous, so the instances will be created in the order specified by you inside the configuration object, after all the instances have been created, the interfaces will be instantiated, and at the end of the whole process, the callback function is fired. If you want to instantiate the modules asynchronous, you need to add *"async: true"* property.
 
 ## Native Methods
 ***
