@@ -689,6 +689,16 @@ Inside controllers you can interact with associated models and views directly, u
         this.linked.model.<model alias>
         this.linked.view.<view alias>
         
+If you are going to link a view or a model that have been previously instantiated, yo can reference them inside an array by using the object namespace, like this:
+
+        config: {
+                models: [ 'models.users' ],
+                views: [ 'views.usersGrid' ],
+                listeners: {
+                        <event name>: <method name>
+                }
+        },
+        
 Inside views or models, avoid adding direct references to the controller, for instance, if a specific event in a view needs to start a method in the controller, the view should emit a generic event instead of calling the controller method directly. Inside the view, you can emit an event like this:
 
         this.emit('addBtnClicked');
