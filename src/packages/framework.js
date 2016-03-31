@@ -335,13 +335,14 @@
 				objDomEl.on( properties.eventType, properties.method );
 			},
 
-			_classIterator: function( directive ) {
+			_classIterator: function( objConfig ) {
 		    	var self = this,
 		    		deferred = new $.Deferred(),
 		    		iterator,
 		    		iCounter = 0,
 		    		instancesDone = false,
-		        	insterfacesDone = false;
+		        	insterfacesDone = false,
+		        	deferredArray = [];
 
 		        iterator = function( objsArray, type ) {
 		        	var item;
@@ -349,11 +350,23 @@
 		        	if ( objsArray && objsArray.length > 0 && objsArray.length > iCounter ) {
 		        		item = objsArray[ iCounter ];
 
-		        		$.when( vRap.Actions.create( item.class, item.namespace, item.properties ) ).done(function() {
-		        			iCounter += 1;
+		        		if ( objConfig.async ) {
+							$.each( objConfig.instances, function( index, item ) {
+								deferredArray.push( vRap.Actions.create( item.class, item.namespace, item.properties ) );
 
-		        			iterator( objsArray, type );
-			            });
+								iCounter += 1;
+							});
+
+							$.when.apply( $, deferredArray ).done(function() {
+								iterator( objsArray, type );
+							});
+						} else {
+							$.when( vRap.Actions.create( item.class, item.namespace, item.properties ) ).done(function() {
+			        			iCounter += 1;
+
+			        			iterator( objsArray, type );
+				            });
+						}
 		        	} else {
 		        		if ( type === 'instances' ) {
 		        			instancesDone = true;
@@ -364,14 +377,14 @@
 		        		if ( !insterfacesDone ) {
 		        			iCounter = 0;
 
-		        			iterator( directive.interfaces, 'interfaces' );
+		        			iterator( objConfig.interfaces, 'interfaces' );
 		        		} else {
 		        			deferred.resolve();
 		        		}
 		        	}
 		        };
 
-		        iterator( directive.instances, 'instances' );
+		        iterator( objConfig.instances, 'instances' );
 
 	        	return deferred.promise();
 		    }
