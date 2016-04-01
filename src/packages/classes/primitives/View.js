@@ -83,8 +83,6 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
                         if ( eventName === 'dataChange' ) {
                             if ( self.refresh ) {
                                 self.refresh( properties );
-                            } else {
-                                vRap.Msg.alert( localeText.noRefresh + ' | ' + self._objectNamespace );
                             }
                         }
                     });
