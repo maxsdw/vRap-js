@@ -515,12 +515,14 @@ In order to create an event handler for a specific user interaction, vRap provid
 
 What we are telling to the system here is that every time the user clicks on a button with an id equal to "add", it must run the "addRecord" method.
 
-Also notice that a method named as **"refresh"** must be defined whenever you create a view, this method will be fired every time the associated model is modified. This is very useful if we want to automatically refresh the view on data changes (data-binding). To ensure **"refresh"** method runs, you must introduce all data changes using the default model actions. **refresh** method receives the updated data object as an argument:
+Also notice that a method named as **"refresh"** (Optional) can be defined inside the view, this method will be fired every time one of the default model actions is triggered in the associated model:
 
 * getData()
 * sendData()
 * sendRecord()
 * deleteRecord()
+
+This is very useful if we want to automatically refresh/update the UI on data changes, but if you are going to implement vRap.js with some other reactive/data-binding library like React or jsObservable, it wont' be neccesary to use our built-in **"refresh"** method, as those libraries already come with a logic to generate the DOM modifications on state changes.
 
 In the next example we'll render a table using the data in the model previously defined. This is how the **"index.html"** file should look like:
 
