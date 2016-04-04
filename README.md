@@ -26,7 +26,7 @@ This will generate a namespace for the new application, to retrieve it use this:
 
 ### Define a new class
 
-Once the application enviroment has been created, you can start defining your clasess like this:
+Once the application environment has been created, you can start defining your classes like this:
 
         vRap.Actions.define( <namespace>, <atributes>, <statics> );
 
