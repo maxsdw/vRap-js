@@ -522,7 +522,7 @@ Also notice that a method named as **"refresh"** (Optional) can be defined insid
 * sendRecord()
 * deleteRecord()
 
-This is very useful if we want to automatically refresh/update the UI on data changes, but if you are going to implement vRap.js with some other reactive/data-binding library like React or jsObservable, it wont' be neccesary to use our built-in **"refresh"** method, as those libraries already come with a logic to generate the DOM modifications on state changes.
+This is very useful if we want to automatically refresh/update the UI on data changes, but if you are going to implement vRap.js with some other reactive/data-binding library like React or jsObservable, it wont' be necessary to use our built-in **"refresh"** method, as those libraries already come with a logic to generate the DOM modifications on state changes.
 
 In the next example we'll render a table using the data in the model previously defined. This is how the **"index.html"** file should look like:
 
