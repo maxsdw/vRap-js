@@ -141,7 +141,7 @@ When creating a new object, you can add new public attributes or modify already 
 
 In order to generate a well arranged objects tree, when defining the object namespace is recommended to write before the name, the primitive category to which it belongs, for instance, in our previous example, "usersGrid" object is extended from "Base.primitives.View", so we write the namespace as "views.usersGrid".
 
-When a new object is created you can assign it an unique alias, the alias will be used to identify the object under certain circunstances, this property is initially optional, but it is mandatory in some cases that will be explained later.
+When a new object is created you can assign it an unique alias, the alias will be used to identify the object under certain circumstances, this property is initially optional, but it is mandatory in some cases that will be explained later.
 
         vRap.Actions.create( 'DemoApp.views.DataGrid', 'views.usersGrid', {
                 alias: 'usersGrid'
@@ -186,7 +186,7 @@ You can also unsubscribe previously added observers:
 
 ### Using callback functions
 
-It is possible to run a callback function when creating a new object, for that porpuse you can use jQuery Deferred objects, like this:
+It is possible to run a callback function when creating a new object, for that purpose you can use jQuery Deferred objects, like this:
 
         vRap.Actions.define( 'DemoApp.views.DataGrid', (function() {
                 return {
@@ -220,7 +220,7 @@ Or remove all the instances created from the same class, like this:
 ## MVC Application
 ***
 
-Model, view and controller are three basic components you can use to construct an application, they work as separate units but are able to communicate themselves in order to provide an expected behavior. A view can be aware of the existence of a specific model but it doesn't know about controllers, a model doesn't know about views nor controllers and a controller knows about views an models.
+Model, view and controller are three basic components you can use to construct an application, they work as separate units but are able to communicate themselves in order to provide an expected behaviour. A view can be aware of the existence of a specific model but it doesn't know about controllers, a model doesn't know about views nor controllers and a controller knows about views an models.
 
 ### Defining a model
 
@@ -484,7 +484,7 @@ You can set a DOM element as the view wrapper, so all the event handlers will be
                 insertTo: $('#widgetsWrapper')
         });
         
-It also possible to set one or more css clasess to attach to the object's domEl, by using the "style" property like this:
+It also possible to set one or more css classes to attach to the object's domEl, by using the "style" property like this:
 
         vRap.Actions.create( 'DemoApp.views.DataGrid', 'views.usersGrid', {
                 model: 'models.users', // The model must be instantiated before using it in a view
@@ -611,9 +611,9 @@ Now, we have to define our view inside **"view.js"** file:
                 });
         });
 
-Notice that inside **"refresh"** method we set an instruction to run "renderBody()", in this way we ensure that every time the model is modified, the table is updated with the new data. You can apply any data-binding technique you consider appropiate, like "JsObservable".
+Notice that inside **"refresh"** method we set an instruction to run "renderBody()", in this way we ensure that every time the model is modified, the table is updated with the new data. You can apply any data-binding technique you consider appropriate, like "JsObservable".
 
-In the previous example we used jsRender templating library, but feel free to use any JS template engine you prefer. If you are defining templates in separeted HTML files, you can load HTML content from a especific .html file easily to the view by passing the file URL inside the "template" configuration property, then you can access the template within the object by running "properties.template":
+In the previous example we used jsRender templating library, but feel free to use any JS template engine you prefer. If you are defining templates in separated HTML files, you can load HTML content from a specific .html file easily to the view by passing the file URL inside the "template" configuration property, then you can access the template within the object by running "properties.template":
 
         vRap.Actions.define( 'DemoApp.views.DataGrid', (function() {
                 return {
@@ -650,9 +650,9 @@ In the previous example we used jsRender templating library, but feel free to us
 
 ### Defining a controller
 
-The controller is a logical component that works as bridge between views and models, it holds a set of behaviors that interact with the data, which respond to events triggered inside a view.
+The controller is a logical component that works as bridge between views and models, it holds a set of behaviours that interact with the data, which respond to events triggered inside a view.
 
-Notice that controllers must not include any DOM manipulation instructions, like adding, removing or modifying visual elements, these belong only to the view; a controller may consist on behaviors to validate, transform and operate data, it also can emit events set inside an interface in order to perform specific interactions with other modules.
+Notice that controllers must not include any DOM manipulation instructions, like adding, removing or modifying visual elements, these belong only to the view; a controller may consist on behaviours to validate, transform and operate data, it also can emit events set inside an interface in order to perform specific interactions with other modules.
 
 This is how you can define a controller:
 
@@ -824,7 +824,7 @@ In the next example we'll create a module for the users administration grid:
 
 ### Defining an interface
 
-In order to preserve loose coupling and single responsibility, inside a specific module, avoid adding direct references to objects from a different one, instead you can define a class that work as interface, an interface in vRap.js is in some way similar to a controller, the difference is that the controllers works as bridge between models and views attached to it (single module), and the interface in the other hand can communicate separeted modules.
+In order to preserve loose coupling and single responsibility, inside a specific module, avoid adding direct references to objects from a different one, instead you can define a class that work as interface, an interface in vRap.js is in some way similar to a controller, the difference is that the controllers works as bridge between models and views attached to it (single module), and the interface in the other hand can communicate separated modules.
 
 In vRap.js you can orchestrate components by using interfaces, let's say we need that when a user clicks on a button defined inside the view of a module "A", it triggers an action to initialize module "B, what we should do is subscribing an observer to the controller in the module "A", all subscription logic should be set in the interface, when the subscribed event is published, the observer will run the required action.
 
@@ -998,7 +998,7 @@ newApp | Create a new application instance and set it as the active app | vRap.A
 switchApp | Change the active app | vRap.Actions.switchApp( \<app name\> )
 define | Define/Declare a new class | vRap.Actions.define( \<namespace\>, \<properties\>, \<statics\> );
 create | Create a new instance from a specific class | vRap.Actions.create( \<class namespace\>, \<object alias\>, \<properties\> ) or vRap.Actions.create( \<multi-modules object\> )
-destroy | Destroy a previosly created instance | vRap.Actions.destroy( \<object alias\> )
+destroy | Destroy a previously created instance | vRap.Actions.destroy( \<object alias\> )
 destroyByClass | Destroy all instances from a particular class | vRap.Actions.destroyByClass( \<class namespace\> )
 
 ### Query
@@ -1033,7 +1033,7 @@ deleteRecord | Delete a record | deleteRecord( \<record id\>, \<callback object\
 
 Method | Description | Usage
 ------------ | ------------- | -------------
-refresh | The method that runs everytime the associated model changes | refresh()
+refresh | The method that runs every time the associated model changes | refresh()
 emit | Emits a specific event to be listened by a controller | refresh()
 
 ### Generators
@@ -1067,7 +1067,7 @@ config.url | Specify a URL to use when performing data synchronization | String
 config.forceParamId | Include the record ID inside data payload when sending it to the server | Boolean
 config.sendJSON | Force data to be sent as a JSON string | Boolean
 config.ajaxConf | Receives an object with jQuer.ajax() extra settings | Object
-config.api | Specify a diferent URL for each one of the synchronization methods (create, read, update, delete) | Object
+config.api | Specify a different URL for each one of the synchronization methods (create, read, update, delete) | Object
 config.prependRecord | Force the new record to be included at the beginning of the array inside client-side data | Boolean
 
 ### View
@@ -1077,7 +1077,7 @@ Property | Description | Type
 domEl | Specify the DOM element that wraps the view | jQuery Object
 insertTo | Specify the DOM element where to insert the view wrapper when domEl wasn't defined | jQuery Object
 model | Set the model associated to the view using its alias | String
-style | Set one or more css clasess to attach to the object's domEl | String
+style | Set one or more css classes to attach to the object's domEl | String
 config.events | Configure event handlers for specific interactions | Object
 
 ### Controller
