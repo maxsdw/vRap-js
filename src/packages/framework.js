@@ -115,7 +115,7 @@
 						controllers: {},
 						usedAlias: []
 					},
-					reactCmpt: {},
+					reactCmpts: {},
 					localeObj: {}
 				};
 
