@@ -522,7 +522,7 @@ Also notice that a method named as **"refresh"** (Optional) can be defined insid
 * sendRecord()
 * deleteRecord()
 
-This is very useful if we want to automatically refresh/update the UI on data changes, but if you are going to implement vRap.js with some other reactive/data-binding library like React or jsObservable, it wont' be necessary to use our built-in **"refresh"** method, as those libraries already come with a logic to generate the DOM modifications on state changes.
+This is very useful if we want to automatically refresh/update the UI on data changes.
 
 In the next example we'll render a table using the data in the model previously defined. This is how the **"index.html"** file should look like:
 
@@ -644,11 +644,73 @@ In the previous example we used jsRender templating library, but feel free to us
                         }
                 };
         })(), {} );
+        
+### Using views with React library
 
+A view can also be used with React library, in that scenario, you can specify the React components you want to attach to the view by using the **config.components** property ( The view from behind automatically creates instances of the elements by running **React.createElement()** method ). Inside the default **render()** method in the view, you can trigger **ReactDOM.render()**, like this:
 
-*Note:* Up to this point, nothing happens when clicking the button to create new users, in the next step you will learn how to add a new record to the model using a controller.
+        vRap.Actions.define( 'DemoApp.views.DataGrid', (function() {
+        	return {
+        		extend: 'Base.primitives.View',
+        		config: {
+        			components: [
+        				{
+        					reactClass: 'DataGrid',
+        					objProps: {},
+        					children: {}
+        				}
+        			]
+        		},
+        		properties: {
+        			style: 'datagrid-view regular-box'
+        		},
+        		init: function() {
+        			var self = this,
+        				deferred = new $.Deferred();
+        
+        			$.when( self.render() ).done(function() {
+        				deferred.resolve();
+        			});
+        
+        			return deferred.promise();
+        		},
+        		refresh: function() {
+        		},
+        		render: function() {
+        			var self = this,
+        				deferred = new $.Deferred();
+        
+        			ReactDOM.render(
+        				self.reactElements.DataGrid,
+        				self.properties.domEl[ 0 ]
+        			);
+        
+        			deferred.resolve();
+        		}
+        	};
+        })(), {} );
+
+You should built your React components inside a separated .JSX file, this file must be added in the same folder your view components is.
+
+        var appObj = vRap.Query.getApp( vRap.Properties.activeApp );
+        
+        appObj.reactCmpts.DataGrid = React.createClass({
+        	render: function() {
+        		return (
+        			<div className="dataGrid">
+        				Hello, world! I am a grid.
+        			</div>
+        		);
+        	}
+        });
+
+The view will work as a wrapper for the React component, all its method can be acceded from the view by using the reference that was created for that specific component, like this:
+
+        self.reactElements.DataGrid
 
 ### Defining a controller
+
+Up to this point, nothing happens when clicking the button to create new users, now you will learn how to add a new record to the model using a controller.
 
 The controller is a logical component that works as bridge between views and models, it holds a set of behaviours that interact with the data, which respond to events triggered inside a view.
 
