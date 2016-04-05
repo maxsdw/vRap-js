@@ -6,26 +6,26 @@
  */
 
 vRap.Actions.define( 'Base.primitives.Foundation', (function() {
-    return {
-    	_boot: function() {
-    		var deferred = new $.Deferred();
+	return {
+		_boot: function() {
+			var deferred = new $.Deferred();
 
-    		return deferred.resolve();
-    	},
-    	subscribe: function( observer ) {
+			return deferred.resolve();
+		},
+		subscribe: function( observer ) {
 			this.observerList.push( observer );
-    	},
-    	unsubscribe: function( observer ) {
-    		var observerIndex = this.observerList.indexOf( observer, 0 );
+		},
+		unsubscribe: function( observer ) {
+			var observerIndex = this.observerList.indexOf( observer, 0 );
 
-    		if ( observerIndex >= 0 ) {
-    			this.observerList.splice( observerIndex, 1 );
-    		}
-    	},
-    	publish: function( eventName, properties ) {
-    		$.each( this.observerList, function( index, observer ) {
-    			observer( eventName, properties );
-    		});
-    	}
-    };
+			if ( observerIndex >= 0 ) {
+				this.observerList.splice( observerIndex, 1 );
+			}
+		},
+		publish: function( eventName, properties ) {
+			$.each( this.observerList, function( index, observer ) {
+				observer( eventName, properties );
+			});
+		}
+	};
 })(), {} );

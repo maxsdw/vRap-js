@@ -14,8 +14,8 @@
 			activeApp: null,
 			idCounter: 0
 		},
-        Query: {
-        	getApp: function( appName ) {
+		Query: {
+			getApp: function( appName ) {
 				var appObj = vRap.Apps[ appName ];
 
 				if ( appObj ) {
@@ -28,44 +28,44 @@
 			},
 
 			getClass: function( namespace ) {
-	        	var subnames = namespace.split('.'),
-	        		route = vRap.Classes;
+				var subnames = namespace.split('.'),
+					route = vRap.Classes;
 
-			    $.each( subnames, function( index, item ) {
-	        		route = route[ item ];
-	        	});
+				$.each( subnames, function( index, item ) {
+					route = route[ item ];
+				});
 
-	        	if ( route ) {
-	        		return route;
-	        	} else {
-	        		vRap.Msg.alert( vRap.Locale.alertMessages.noNamespace + ' | ' + namespace );
+				if ( route ) {
+					return route;
+				} else {
+					vRap.Msg.alert( vRap.Locale.alertMessages.noNamespace + ' | ' + namespace );
 
-	        		return false;
-	        	}
-	        },
+					return false;
+				}
+			},
 
-	        getObj: function( objNamespace ) {
-		        var app,
-		            route,
-		            splitNamespace;
+			getObj: function( objNamespace ) {
+				var app,
+					route,
+					splitNamespace;
 
-		        app = this.getApp( vRap.Properties.activeApp );
-		        route = app.objManager;
+				app = this.getApp( vRap.Properties.activeApp );
+				route = app.objManager;
 
-		        splitNamespace = objNamespace.split('.');
+				splitNamespace = objNamespace.split('.');
 
-		        $.each( splitNamespace, function( index, item ) {
-		        	if ( route ) {
-		        		route = route[ item ];
-		        	} else {
-		        		vRap.Msg.alert( vRap.Locale.alertMessages.noObject + ' | ' + objNamespace );
+				$.each( splitNamespace, function( index, item ) {
+					if ( route ) {
+						route = route[ item ];
+					} else {
+						vRap.Msg.alert( vRap.Locale.alertMessages.noObject + ' | ' + objNamespace );
 
-		        		return false;
-		        	}
-		        });
+						return false;
+					}
+				});
 
-		        return route;
-		    },
+				return route;
+			},
 
 			getObjsByClass: function( classNamespace ) {
 				var app,
@@ -91,42 +91,42 @@
 				return objectsArray;
 			},
 
-	        getEvents: function( domEl ) {
-		    	return $._data( domEl, "events" );
-		    }
-        },
-        Generators: {
-        	genIdNumber: function() {
+			getEvents: function( domEl ) {
+				return $._data( domEl, "events" );
+			}
+		},
+		Generators: {
+			genIdNumber: function() {
 				vRap.Properties.idCounter += 1;
 				return vRap.Properties.idCounter;
 			}
-        },
-        Actions: {
-        	newApp: function( properties ) {
-        		var deferred = new $.Deferred();
+		},
+		Actions: {
+			newApp: function( properties ) {
+				var deferred = new $.Deferred();
 
-	        	if ( $.type( properties.appName ) !== 'string' ) {
-	        		properties.appName = String( properties.appName );
-	        	}
+				if ( $.type( properties.appName ) !== 'string' ) {
+					properties.appName = String( properties.appName );
+				}
 
-	        	vRap.Apps[ properties.appName ] = {
-	        		objManager: {},
-	        		references: {
-	        			controllers: {},
-	        			usedAlias: []
-	        		},
-	        		reactCmpt: {},
-	        		localeObj: {}
-	        	};
+				vRap.Apps[ properties.appName ] = {
+					objManager: {},
+					references: {
+						controllers: {},
+						usedAlias: []
+					},
+					reactCmpt: {},
+					localeObj: {}
+				};
 
-	        	vRap.Properties.activeApp = properties.appName;
+				vRap.Properties.activeApp = properties.appName;
 
-	        	deferred.resolve();
+				deferred.resolve();
 
-	        	return vRap.Apps[ properties.appName ];
-	        },
+				return vRap.Apps[ properties.appName ];
+			},
 
-	        switchApp: function( appName ) {
+			switchApp: function( appName ) {
 				var appObj = vRap.Apps[ appName ];
 
 				if ( appObj ) {
@@ -137,192 +137,192 @@
 				}
 			},
 
-		    define: function( namespace, API, statics ) {
-		        var parentClass,
-		            childClass,
-		            subnames = namespace.split('.'),
-		            route = vRap.Classes,
-		            objectKey;
+			define: function( namespace, API, statics ) {
+				var parentClass,
+					childClass,
+					subnames = namespace.split('.'),
+					route = vRap.Classes,
+					objectKey;
 
-		        if ( API.extend ) {
-	    			parentClass = vRap.Query.getClass( API.extend );
+				if ( API.extend ) {
+					parentClass = vRap.Query.getClass( API.extend );
 
-	    			API._extend = API.extend;
+					API._extend = API.extend;
 
-	    			delete API.extend;
-	    		}
-		        
-		        $.each( subnames, function( index, item ) {
-		            if ( index < ( subnames.length - 1 ) ) {
-		                if ( !route[ item ] ) {
-		                    route[ item ] = {};
-		                }
-		            } else {
-		                route[ item ] = function( properties ) {
-		                    var scope = this;
+					delete API.extend;
+				}
+				
+				$.each( subnames, function( index, item ) {
+					if ( index < ( subnames.length - 1 ) ) {
+						if ( !route[ item ] ) {
+							route[ item ] = {};
+						}
+					} else {
+						route[ item ] = function( properties ) {
+							var scope = this;
 
-		                    // Calling the superClass constructor
-		                    if ( parentClass ) {
-		                        parentClass.call( scope );
-		                    }
+							// Calling the superClass constructor
+							if ( parentClass ) {
+								parentClass.call( scope );
+							}
 
-		                    // Setting default properties
-		                    scope.observerList = [];
-		                    scope.linked = {};
-		                    scope.properties = { booted: false, initialized: false };
-		                    scope.properties = $.extend( scope.properties, {} );
+							// Setting default properties
+							scope.observerList = [];
+							scope.linked = {};
+							scope.properties = { booted: false, initialized: false };
+							scope.properties = $.extend( scope.properties, {} );
 
-		                	// Setting class name
-		                    scope._classNamespace = namespace;
+							// Setting class name
+							scope._classNamespace = namespace;
 
-		                    // Adding API properties
-		                    $.each( API, function( key, value ) {
-		                        if ( !$.isFunction( API[ key ] ) ) {
-		                            if ( key === 'properties' ) {
-		                                $.extend( scope.properties,  API[ key ] );
-		                            } else {
-		                                scope[ key ] = value;
-		                            }
-		                        }
-		                    });
+							// Adding API properties
+							$.each( API, function( key, value ) {
+								if ( !$.isFunction( API[ key ] ) ) {
+									if ( key === 'properties' ) {
+										$.extend( scope.properties,  API[ key ] );
+									} else {
+										scope[ key ] = value;
+									}
+								}
+							});
 
-		                    for ( objectKey in properties ) {
-		                    	if ( $.type( properties[ objectKey ] ) === 'function' ) {
-		                    		scope[ objectKey ] = properties[ objectKey ];
-		                    	} else {
-		                    		scope.properties[ objectKey ] = properties[ objectKey ];
-		                    	}
-		                    }
-		                };
-		            }
+							for ( objectKey in properties ) {
+								if ( $.type( properties[ objectKey ] ) === 'function' ) {
+									scope[ objectKey ] = properties[ objectKey ];
+								} else {
+									scope.properties[ objectKey ] = properties[ objectKey ];
+								}
+							}
+						};
+					}
 
-		            route = route[ item ];
-		        });
+					route = route[ item ];
+				});
 
-		        childClass = route;
+				childClass = route;
 
-		        // Extending from ancestor
-		        if ( parentClass ) {
-		            childClass.prototype = Object.create( parentClass.prototype );
-		            childClass.prototype.constructor = childClass;
-		        }
+				// Extending from ancestor
+				if ( parentClass ) {
+					childClass.prototype = Object.create( parentClass.prototype );
+					childClass.prototype.constructor = childClass;
+				}
 
-		        // Adding methods
-		        $.each( API, function( key, value ) {
-		            if ( $.isFunction( API[ key ] ) ) {
-		                childClass.prototype[ key ] = value;
-		            }
-		        });
+				// Adding methods
+				$.each( API, function( key, value ) {
+					if ( $.isFunction( API[ key ] ) ) {
+						childClass.prototype[ key ] = value;
+					}
+				});
 
-		        // Adding statics
-		        if ( !$.isEmptyObject( statics ) ) {
-		            $.each( statics, function( key, value ) {
-		                childClass[ key ] = value;
-		            });
-		        }
-		    },
+				// Adding statics
+				if ( !$.isEmptyObject( statics ) ) {
+					$.each( statics, function( key, value ) {
+						childClass[ key ] = value;
+					});
+				}
+			},
 
-		    create: function( classNamespace , objNamespace, properties ) {
-		        var self = this,
-		        	app,
-		        	deferred = new $.Deferred(),
-		            classContructor,
-		            subnames,
-		            route;
+			create: function( classNamespace , objNamespace, properties ) {
+				var self = this,
+					app,
+					deferred = new $.Deferred(),
+					classContructor,
+					subnames,
+					route;
 
-		        if ( $.type( classNamespace ) === 'object' && classNamespace.instances || classNamespace.interfaces ) {
-		        	$.when( self._classIterator( classNamespace ) ).done(function() {
-		        		deferred.resolve();
-		        	});
-		        } else {
-		        	classContructor = vRap.Query.getClass( classNamespace );
+				if ( $.type( classNamespace ) === 'object' && classNamespace.instances || classNamespace.interfaces ) {
+					$.when( self._classIterator( classNamespace ) ).done(function() {
+						deferred.resolve();
+					});
+				} else {
+					classContructor = vRap.Query.getClass( classNamespace );
 
-			        if ( classContructor ) {
-			        	app = vRap.Query.getApp( vRap.Properties.activeApp );
+					if ( classContructor ) {
+						app = vRap.Query.getApp( vRap.Properties.activeApp );
 
-			        	if ( app ) {
-				            subnames = objNamespace.split('.');
-				            route = app.objManager;
+						if ( app ) {
+							subnames = objNamespace.split('.');
+							route = app.objManager;
 
-				            $.each( subnames, function( index, item ) {
-				                if ( index < ( subnames.length - 1 ) ) {
-				                    if ( !route[ item ] ) {
-				                        route[ item ] = {};
-				                    }
-				                } else {
-				                    route[ item ] = new classContructor( properties );
-				                }
+							$.each( subnames, function( index, item ) {
+								if ( index < ( subnames.length - 1 ) ) {
+									if ( !route[ item ] ) {
+										route[ item ] = {};
+									}
+								} else {
+									route[ item ] = new classContructor( properties );
+								}
 
-				                route = route[ item ];
-				            });
+								route = route[ item ];
+							});
 
-				            route._objectNamespace = objNamespace;
-				            route.properties.id = 'vRap_' + objNamespace.toLowerCase().replace( /\./g, '_' ) + '_' + vRap.Generators.genIdNumber();
+							route._objectNamespace = objNamespace;
+							route.properties.id = 'vRap_' + objNamespace.toLowerCase().replace( /\./g, '_' ) + '_' + vRap.Generators.genIdNumber();
 
-				            if ( route.properties.alias ) {
-				            	if ( app.references.usedAlias.indexOf( route.properties.alias ) < 0) {
-				            		app.references.usedAlias.push( route.properties.alias );
-				            	} else {
-				            		vRap.Msg.alert( vRap.Locale.alertMessages.duplicatedAlias + ' | Object: ' + objNamespace + ' | Alias: ' + route.properties.alias );
-				            	}
-				            }
+							if ( route.properties.alias ) {
+								if ( app.references.usedAlias.indexOf( route.properties.alias ) < 0) {
+									app.references.usedAlias.push( route.properties.alias );
+								} else {
+									vRap.Msg.alert( vRap.Locale.alertMessages.duplicatedAlias + ' | Object: ' + objNamespace + ' | Alias: ' + route.properties.alias );
+								}
+							}
 
-				            $.when( route._boot() ).done(function() {
-				            	route.properties.booted = true;
+							$.when( route._boot() ).done(function() {
+								route.properties.booted = true;
 
-			            		if ( route.init ) {
-					                $.when( route.init() ).done(function( response ) {
-					                	route.properties.initialized = true;
+								if ( route.init ) {
+									$.when( route.init() ).done(function( response ) {
+										route.properties.initialized = true;
 
-					                    deferred.resolve( route, response );
-					                });
-					            } else {
-					            	vRap.Msg.alert( vRap.Locale.alertMessages.noInit+ ' | ' + objNamespace );
-					            }
-				            });
-			        	}
-			        }
-		        }
+										deferred.resolve( route, response );
+									});
+								} else {
+									vRap.Msg.alert( vRap.Locale.alertMessages.noInit+ ' | ' + objNamespace );
+								}
+							});
+						}
+					}
+				}
 
-		        return deferred.promise();
-		    },
+				return deferred.promise();
+			},
 
-		    destroy: function( objNamespace ) {
-		        var deferred = new $.Deferred(),
-		            app,
-		            object,
-		            splitNamespace,
-		            iterator,
-		            i = 0;
+			destroy: function( objNamespace ) {
+				var deferred = new $.Deferred(),
+					app,
+					object,
+					splitNamespace,
+					iterator,
+					i = 0;
 
-		        app = vRap.Query.getApp( vRap.Properties.activeApp );
-		        object = vRap.Query.getObj( objNamespace );
-		        splitNamespace = objNamespace.split('.');
+				app = vRap.Query.getApp( vRap.Properties.activeApp );
+				object = vRap.Query.getObj( objNamespace );
+				splitNamespace = objNamespace.split('.');
 
-		        iterator = function( route, subname ) {
-		        	if ( route[ subname ]._objectNamespace &&  route[ subname ]._objectNamespace === objNamespace ) {
-		        		route[ subname ] = null;
+				iterator = function( route, subname ) {
+					if ( route[ subname ]._objectNamespace &&  route[ subname ]._objectNamespace === objNamespace ) {
+						route[ subname ] = null;
 
-		        		delete route[ subname ];
+						delete route[ subname ];
 
-		        		deferred.resolve();
-		        	} else {
-		        		iterator( route[ subname ], splitNamespace[ i += 1 ] );
-		        	}
-		        };
+						deferred.resolve();
+					} else {
+						iterator( route[ subname ], splitNamespace[ i += 1 ] );
+					}
+				};
 
-		        if ( object ) {
-		            if ( object.properties.domEl ) {
-		                object.properties.domEl.remove();
-		            }
+				if ( object ) {
+					if ( object.properties.domEl ) {
+						object.properties.domEl.remove();
+					}
 
-		            iterator( app.objManager, splitNamespace[ i ] );
-		        } else {
-		        	deferred.resolve();
-		        }
+					iterator( app.objManager, splitNamespace[ i ] );
+				} else {
+					deferred.resolve();
+				}
 
-		        return deferred.promise();
-		    },
+				return deferred.promise();
+			},
 
 			destroyByClass: function( classNamespace ) {
 				$.each( vRap.Query.getObjsByClass( classNamespace ), function( index, item ) {
@@ -338,21 +338,21 @@
 			},
 
 			_classIterator: function( objConfig ) {
-		    	var self = this,
-		    		deferred = new $.Deferred(),
-		    		iterator,
-		    		iCounter = 0,
-		    		instancesDone = false,
-		        	insterfacesDone = false,
-		        	deferredArray = [];
+				var self = this,
+					deferred = new $.Deferred(),
+					iterator,
+					iCounter = 0,
+					instancesDone = false,
+					insterfacesDone = false,
+					deferredArray = [];
 
-		        iterator = function( objsArray, type ) {
-		        	var item;
+				iterator = function( objsArray, type ) {
+					var item;
 
-		        	if ( objsArray && objsArray.length > 0 && objsArray.length > iCounter ) {
-		        		item = objsArray[ iCounter ];
+					if ( objsArray && objsArray.length > 0 && objsArray.length > iCounter ) {
+						item = objsArray[ iCounter ];
 
-		        		if ( objConfig.async ) {
+						if ( objConfig.async ) {
 							$.each( objConfig.instances, function( index, item ) {
 								deferredArray.push( vRap.Actions.create( item.class, item.namespace, item.properties ) );
 
@@ -364,38 +364,38 @@
 							});
 						} else {
 							$.when( vRap.Actions.create( item.class, item.namespace, item.properties ) ).done(function() {
-			        			iCounter += 1;
+								iCounter += 1;
 
-			        			iterator( objsArray, type );
-				            });
+								iterator( objsArray, type );
+							});
 						}
-		        	} else {
-		        		if ( type === 'instances' ) {
-		        			instancesDone = true;
-		        		} else if ( type === 'interfaces' ) {
-		        			insterfacesDone = true;
-		        		}
+					} else {
+						if ( type === 'instances' ) {
+							instancesDone = true;
+						} else if ( type === 'interfaces' ) {
+							insterfacesDone = true;
+						}
 
-		        		if ( !insterfacesDone ) {
-		        			iCounter = 0;
+						if ( !insterfacesDone ) {
+							iCounter = 0;
 
-		        			iterator( objConfig.interfaces, 'interfaces' );
-		        		} else {
-		        			deferred.resolve();
-		        		}
-		        	}
-		        };
+							iterator( objConfig.interfaces, 'interfaces' );
+						} else {
+							deferred.resolve();
+						}
+					}
+				};
 
-		        iterator( objConfig.instances, 'instances' );
+				iterator( objConfig.instances, 'instances' );
 
-	        	return deferred.promise();
-		    }
-        },
-	    Msg: {
-	    	alert: function( message ) {
-	    		console.log( '%c ' + message, 'color: red' );
-		    },
-	    }
+				return deferred.promise();
+			}
+		},
+		Msg: {
+			alert: function( message ) {
+				console.log( '%c ' + message, 'color: red' );
+			},
+		}
 	};
 
 	if ( !window.vRap ) {

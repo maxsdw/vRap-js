@@ -6,20 +6,20 @@
  */
 
 vRap.Actions.define( 'Base.primitives.Interface', (function() {
-    return {
-    	extend: 'Base.primitives.Foundation',
-    	properties: {
-    		type: 'interface'
-    	},
-    	observerList: [],
-    	controller: {},
-    	_boot: function() {
-    		var self = this,
-    			deferred = new $.Deferred();
+	return {
+		extend: 'Base.primitives.Foundation',
+		properties: {
+			type: 'interface'
+		},
+		observerList: [],
+		controller: {},
+		_boot: function() {
+			var self = this,
+				deferred = new $.Deferred();
 
-    		self.controller = vRap.Query.getApp( vRap.Properties.activeApp ).references.controllers;
+			self.controller = vRap.Query.getApp( vRap.Properties.activeApp ).references.controllers;
 
-    		deferred.resolve();
-    	}
-    };
+			deferred.resolve();
+		}
+	};
 })(), {} );
