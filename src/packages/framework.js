@@ -114,7 +114,9 @@
 	        		references: {
 	        			controllers: {},
 	        			usedAlias: []
-	        		}
+	        		},
+	        		reactCmpt: {},
+	        		localeObj: {}
 	        	};
 
 	        	vRap.Properties.activeApp = properties.appName;
