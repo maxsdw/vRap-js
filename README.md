@@ -23,6 +23,14 @@ In order to create a new app instance we must call the method **newApp()**, pass
 This will generate a namespace for the new application, to retrieve it use this:
 
         vRap.Apps.<app name>;
+        
+Optionally you can define a locale object inside the application instance if you are planning to provide multiple languages inside your application:
+
+        vRap.Apps.<app name>.localeObj = {
+                demo_widget: {
+                        title: 'Demo Widget'
+                }
+        };
 
 ### Define a new class
 
