@@ -313,6 +313,10 @@
 
 				if ( object ) {
 					if ( object.properties.domEl ) {
+						if ( object.reactElements && Object.keys( object.reactElements ).length > 0 ) {
+							ReactDOM.unmountComponentAtNode( object.properties.domEl[ 0 ] );
+						}
+						
 						object.properties.domEl.remove();
 					}
 

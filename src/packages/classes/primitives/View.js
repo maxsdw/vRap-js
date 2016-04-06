@@ -15,7 +15,6 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
 		properties: {
 			type: 'view'
 		},
-		reactElements: {},
 		_boot: function() {
 			var self = this,
 				deferred = new $.Deferred(),
@@ -78,8 +77,11 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
 				deferred = new $.Deferred();
 
 			if ( self.config.components && $.type( self.config.components ) === 'array' ) {
+				self.reactElements = self.reactElements || {};
+				self.reactInstances = self.reactElements || {};
+
 				$.each( self.config.components, function( index, item ) {
-					self.reactElements[ item.reactClass ] = React.createElement( appObj.reactCmpts[ item.reactClass ], $.extend( item.objProps, { locale: appObj.localeObj } ), item.children );
+					self.reactElements[ item.reactClass ] = React.createElement( appObj.reactCmpts[ item.reactClass ], $.extend( item.objProps, { locale: ( self.config.locale ) ? appObj.localeObj[ self.config.locale ] : {}, viewNamespace: self._objectNamespace } ), item.children );
 				});
 			}
 
