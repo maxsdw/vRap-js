@@ -7,7 +7,7 @@ module.exports = function ( grunt ) {
                     preserveComments: 'some'
                 },
                 files: {
-                    'vrap-js-1.0.0.min.js': [
+                    'vrap-js-1.0.2.min.js': [
                         'packages/framework.js',
                         'packages/locale/eng-us.js',
                         'packages/**/*.js'
