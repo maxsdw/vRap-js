@@ -1105,6 +1105,15 @@ Method | Description | Usage
 ------------ | ------------- | -------------
 refresh | The method that runs every time the associated model changes | refresh()
 emit | Emits a specific event to be listened by a controller | refresh()
+hide | Hide the view DOM elements | hide()
+show | Show the view DOM elements | show()
+
+### Controller
+
+Method | Description | Usage
+------------ | ------------- | -------------
+hideViews | Hide all views associated to the controller | hideViews()
+showViews | Show all views associated to the controller | showViews()
 
 ### Generators
 
