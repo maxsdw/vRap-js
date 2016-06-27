@@ -129,6 +129,12 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
 
 			deferred.resolve();
 		},
+		hide: function() {
+			this.properties.domEl.addClass('hide');
+		},
+		show: function() {
+			this.properties.domEl.removeClass('hide');
+		},
 		emit: function( eventName, properties ) {
 			var self = this;
 

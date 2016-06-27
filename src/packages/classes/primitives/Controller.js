@@ -139,6 +139,20 @@ vRap.Actions.define( 'Base.primitives.Controller', (function() {
 			}
 
 			return deferred.promise();
+		},
+		showViews: function() {
+			var self = this;
+
+			_.each( self.linked.view, function( view ) {
+				view.show();
+			});
+		},
+		hideViews: function() {
+			var self = this;
+
+			_.each( self.linked.view, function( view ) {
+				view.hide();
+			});
 		}
 	};
 })(), {} );
