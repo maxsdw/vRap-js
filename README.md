@@ -1178,4 +1178,4 @@ config.listeners | List all the events that the controller must listen from the 
 
 Property | Description | Type
 ------------ | ------------- | -------------
-config.controllers | List of controllers (by alias) associated with the mediator (Optional) | Array
+config.controllers | List of controllers (by alias) associated with the interface (Optional) | Array
