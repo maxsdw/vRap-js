@@ -1116,7 +1116,7 @@ hideViews | Hide all views associated to the controller | hideViews()
 showViews | Show all views associated to the controller | showViews()
 processViews | Generate instances for the views defined in **config.views** | processViews()
 
-### Mediator
+### Interface
 
 Method | Description | Usage
 ------------ | ------------- | -------------
@@ -1174,7 +1174,7 @@ config.models | List the models to automatically instantiate before starting the
 config.views | List the views to automatically instantiate before starting the controller | Object
 config.listeners | List all the events that the controller must listen from the associated views | Object
 
-### Mediator
+### Interface
 
 Property | Description | Type
 ------------ | ------------- | -------------
