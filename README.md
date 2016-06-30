@@ -1120,7 +1120,7 @@ processViews | Generate instances for the views defined in **config.views** | pr
 
 Method | Description | Usage
 ------------ | ------------- | -------------
-hideViews | Hide all views associated to a list of controllers, if any argument is passed, the method will use the controllers list defined inside **config.controllers** | hideViews(\<array of controllers alias\>)
+hideViews | Hide all views associated to a list of controllers, if any argument is passed, the method will use the controllers list defined inside **config.controllers** | hideViews(\<array of controllers (by alias)\>)
 
 ### Generators
 
