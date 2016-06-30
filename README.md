@@ -1173,3 +1173,9 @@ Property | Description | Type
 config.models | List the models to automatically instantiate before starting the controller | Object
 config.views | List the views to automatically instantiate before starting the controller | Object
 config.listeners | List all the events that the controller must listen from the associated views | Object
+
+### Mediator
+
+Property | Description | Type
+------------ | ------------- | -------------
+config.controllers | List of controllers (by alias) associated with the mediator (Optional) | Array
