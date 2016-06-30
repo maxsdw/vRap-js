@@ -129,6 +129,16 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
 
 			deferred.resolve();
 		},
+		processComponents: function() {
+			var self = this,
+				deferred= new $.Deferred();
+
+			$.when( self._setReactComponents() ).done(function() {
+				deferred.resolve();
+			});
+
+			return deferred.promise();
+		},
 		hide: function() {
 			this.properties.domEl.addClass('hide');
 		},
