@@ -125,7 +125,7 @@ vRap.Actions.define( 'Base.primitives.Controller', (function() {
 							if ( configObj.alias ) {
 								self.linked[ linkedTo ][ configObj.alias ] = object;
 
-								if ( Object.keys( self.config.views ).length === completedInstances ) {
+								if ( Object.keys( definitionObj ).length === completedInstances ) {
 									deferred.resolve();
 								}
 							} else {
@@ -139,6 +139,11 @@ vRap.Actions.define( 'Base.primitives.Controller', (function() {
 			}
 
 			return deferred.promise();
+		},
+		processViews: function() {
+			var self = this;
+
+			self._setViews();
 		},
 		showViews: function() {
 			var self = this;

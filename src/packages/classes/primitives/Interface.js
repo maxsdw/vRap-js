@@ -20,6 +20,20 @@ vRap.Actions.define( 'Base.primitives.Interface', (function() {
 			self.controller = vRap.Query.getApp( vRap.Properties.activeApp ).references.controllers;
 
 			deferred.resolve();
+		},
+		hideViews: function( controllers ) {
+			var self = this,
+				ctrlList;
+
+			ctrlList = controllers || self.config.controllers;
+
+			if ( ctrlList ) {
+				ctrlList.forEach(function( controller ) {
+					if ( self.controller[ controller ] ) {
+						self.controller[ controller ].hideViews();
+					}
+				});
+			}
 		}
 	};
 })(), {} );
