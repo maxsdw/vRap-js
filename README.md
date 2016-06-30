@@ -1114,6 +1114,13 @@ Method | Description | Usage
 ------------ | ------------- | -------------
 hideViews | Hide all views associated to the controller | hideViews()
 showViews | Show all views associated to the controller | showViews()
+processViews | Generate instances for the views defined in **config.views** | processViews()
+
+### Mediator
+
+Method | Description | Usage
+------------ | ------------- | -------------
+hideViews | Hide all views associated to a list of controllers, if any argument is passed, the method will use the controllers list defined inside **config.controllers** | hideViews(\<array of controllers alias\>)
 
 ### Generators
 
