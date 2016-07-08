@@ -51,12 +51,12 @@ vRap.Actions.define( 'Base.primitives.Controller', (function() {
 
 			return deferred.promise();
 		},
-		_setViews: function() {
+		_setViews: function( viewsObj ) {
 			var self = this,
 				deferred = new $.Deferred(),
 				completedInstances = 0;
 
-			$.when( self._classIterator( self.config.views, 'view' ) ).done(function() {
+			$.when( self._classIterator( viewsObj || self.config.views, 'view' ) ).done(function() {
 				deferred.resolve();
 			});
 
@@ -111,19 +111,23 @@ vRap.Actions.define( 'Base.primitives.Controller', (function() {
 					deferred.resolve();
 				} else {
 					$.each( definitionObj, function( key, configObj ) {
-						var namespace  = $.extend( {}, configObj ).namespace;
+						var clonedObj = $.extend( {}, configObj ),
+							namespace,
+							object;
 
-						delete configObj.namespace;
+						namespace = clonedObj.namespace;
 
-						if ( configObj.domEl ) {
-							configObj.domEl = $( configObj.domEl.selector );
+						delete clonedObj.namespace;
+
+						if ( clonedObj.domEl ) {
+							clonedObj.domEl = $( clonedObj.domEl.selector );
 						}
 
-						$.when( vRap.Actions.create( key, namespace, configObj ) ).done(function( object ) {
+						$.when( vRap.Actions.create( key, namespace, clonedObj ) ).done(function( object ) {
 							completedInstances += 1;
 
-							if ( configObj.alias ) {
-								self.linked[ linkedTo ][ configObj.alias ] = object;
+							if ( clonedObj.alias ) {
+								self.linked[ linkedTo ][ clonedObj.alias ] = object;
 
 								if ( Object.keys( definitionObj ).length === completedInstances ) {
 									deferred.resolve();
@@ -140,10 +144,10 @@ vRap.Actions.define( 'Base.primitives.Controller', (function() {
 
 			return deferred.promise();
 		},
-		processViews: function() {
+		processViews: function( viewsObj ) {
 			var self = this;
 
-			self._setViews();
+			self._setViews( viewsObj );
 		},
 		showViews: function() {
 			var self = this;

@@ -58,8 +58,6 @@
 					if ( route ) {
 						route = route[ item ];
 					} else {
-						vRap.Msg.alert( vRap.Locale.alertMessages.noObject + ' | ' + objNamespace );
-
 						return false;
 					}
 				});
@@ -226,6 +224,7 @@
 				var self = this,
 					app,
 					deferred = new $.Deferred(),
+					instObject,
 					classContructor,
 					subnames,
 					route;
@@ -235,52 +234,58 @@
 						deferred.resolve();
 					});
 				} else {
-					classContructor = vRap.Query.getClass( classNamespace );
+					instObject = vRap.Query.getObj( objNamespace );
 
-					if ( classContructor ) {
-						app = vRap.Query.getApp( vRap.Properties.activeApp );
+					if ( !instObject ) {
+						classContructor = vRap.Query.getClass( classNamespace );
 
-						if ( app ) {
-							subnames = objNamespace.split('.');
-							route = app.objManager;
+						if ( classContructor ) {
+							app = vRap.Query.getApp( vRap.Properties.activeApp );
 
-							$.each( subnames, function( index, item ) {
-								if ( index < ( subnames.length - 1 ) ) {
-									if ( !route[ item ] ) {
-										route[ item ] = {};
+							if ( app ) {
+								subnames = objNamespace.split('.');
+								route = app.objManager;
+
+								$.each( subnames, function( index, item ) {
+									if ( index < ( subnames.length - 1 ) ) {
+										if ( !route[ item ] ) {
+											route[ item ] = {};
+										}
+									} else {
+										route[ item ] = new classContructor( properties );
 									}
-								} else {
-									route[ item ] = new classContructor( properties );
+
+									route = route[ item ];
+								});
+
+								route._objectNamespace = objNamespace;
+								route.properties.id = 'vRap_' + objNamespace.toLowerCase().replace( /\./g, '_' ) + '_' + vRap.Generators.genIdNumber();
+
+								if ( route.properties.alias ) {
+									if ( app.references.usedAlias.indexOf( route.properties.alias ) < 0) {
+										app.references.usedAlias.push( route.properties.alias );
+									} else {
+										vRap.Msg.alert( vRap.Locale.alertMessages.duplicatedAlias + ' | Object: ' + objNamespace + ' | Alias: ' + route.properties.alias );
+									}
 								}
 
-								route = route[ item ];
-							});
+								$.when( route._boot() ).done(function() {
+									route.properties.booted = true;
 
-							route._objectNamespace = objNamespace;
-							route.properties.id = 'vRap_' + objNamespace.toLowerCase().replace( /\./g, '_' ) + '_' + vRap.Generators.genIdNumber();
+									if ( route.init ) {
+										$.when( route.init() ).done(function( response ) {
+											route.properties.initialized = true;
 
-							if ( route.properties.alias ) {
-								if ( app.references.usedAlias.indexOf( route.properties.alias ) < 0) {
-									app.references.usedAlias.push( route.properties.alias );
-								} else {
-									vRap.Msg.alert( vRap.Locale.alertMessages.duplicatedAlias + ' | Object: ' + objNamespace + ' | Alias: ' + route.properties.alias );
-								}
+											deferred.resolve( route, response );
+										});
+									} else {
+										vRap.Msg.alert( vRap.Locale.alertMessages.noInit+ ' | ' + objNamespace );
+									}
+								});
 							}
-
-							$.when( route._boot() ).done(function() {
-								route.properties.booted = true;
-
-								if ( route.init ) {
-									$.when( route.init() ).done(function( response ) {
-										route.properties.initialized = true;
-
-										deferred.resolve( route, response );
-									});
-								} else {
-									vRap.Msg.alert( vRap.Locale.alertMessages.noInit+ ' | ' + objNamespace );
-								}
-							});
 						}
+					} else {
+						deferred.resolve( instObject );
 					}
 				}
 
