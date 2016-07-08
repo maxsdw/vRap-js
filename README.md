@@ -1107,7 +1107,7 @@ refresh | The method that runs every time the associated model changes | refresh
 emit | Emits a specific event to be listened by a controller | refresh()
 hide | Hide the view DOM elements | hide()
 show | Show the view DOM elements | show()
-processComponents | Generate instances for the React components passed as argument. | processComponents(<components configuration object>)
+processComponents | Generate instances for the React components passed as argument. | processComponents( \<components configuration object\> )
 
 ### Controller
 
@@ -1115,7 +1115,7 @@ Method | Description | Usage
 ------------ | ------------- | -------------
 hideViews | Hide all views associated to the controller | hideViews()
 showViews | Show all views associated to the controller | showViews()
-processViews | Generate instances for the views passed as argument. | processViews(<views configuration object>)
+processViews | Generate instances for the views passed as argument. | processViews( \<views configuration object\> )
 
 ### Interface
 
