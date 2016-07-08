@@ -55,7 +55,7 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
 
 			return deferred.promise();
 		},
-		_setTemplate:function() {
+		_setTemplate: function() {
 			var self = this,
 				deferred = new $.Deferred();
 
@@ -71,16 +71,19 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
 
 			return deferred.promise();
 		},
-		_setReactComponents: function() {
+		_setReactComponents: function( components ) {
 			var self = this,
 				appObj = vRap.Query.getApp( vRap.Properties.activeApp ),
-				deferred = new $.Deferred();
+				deferred = new $.Deferred(),
+				componentsArray;
 
-			if ( self.config.components && $.type( self.config.components ) === 'array' ) {
+			componentsArray = components || self.config.components;
+
+			if ( componentsArray && $.type( componentsArray ) === 'array' ) {
 				self.reactElements = self.reactElements || {};
 				self.reactInstances = self.reactElements || {};
 
-				$.each( self.config.components, function( index, item ) {
+				$.each( componentsArray, function( index, item ) {
 					self.reactElements[ item.reactClass ] = React.createElement( appObj.reactCmpts[ item.reactClass ], $.extend( item.objProps, { locale: ( self.config.locale ) ? appObj.localeObj[ self.config.locale ] : {}, viewNamespace: self._objectNamespace } ), item.children );
 				});
 			}
@@ -129,11 +132,11 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
 
 			deferred.resolve();
 		},
-		processComponents: function() {
+		processComponents: function( components ) {
 			var self = this,
 				deferred= new $.Deferred();
 
-			$.when( self._setReactComponents() ).done(function() {
+			$.when( self._setReactComponents( components ) ).done(function() {
 				deferred.resolve();
 			});
 
