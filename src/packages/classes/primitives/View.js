@@ -92,22 +92,42 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
 		},
 		_setModel: function() {
 			var self = this,
-				deferred = new $.Deferred();
+				deferred = new $.Deferred(),
+				propType,
+				models = [];
 
-			if ( self.properties.model && $.type( self.properties.model ) === 'string' ) {
-				self.linked.model = vRap.Query.getObj( self.properties.model );
+			self.linked.model = self.linked.model || {};
 
-				if ( self.linked.model ) {
-					self.linked.model.subscribe(function( eventName, properties ) {
-						if ( eventName === 'dataChange' ) {
-							if ( self.refresh ) {
-								self.refresh( properties );
-							}
-						}
-					});
+			if ( self.properties.model ) {
+				propType = $.type( self.properties.model );
 
-					delete self.properties.model;
+				if ( propType === 'string' ) {
+					models.push( self.properties.model );
+				} else if ( propType === 'array' ) {
+					models = self.properties.model;
 				}
+
+				$.each( models, function( index, model ) {
+					var splitNamespace,
+						modelName;
+
+					splitNamespace = model.split('.');
+					modelName = splitNamespace[ splitNamespace.length - 1 ];
+
+					self.linked.model[ modelName ] = vRap.Query.getObj( model );
+
+					if ( self.linked.model[ modelName ] ) {
+						self.linked.model[ modelName ].subscribe(function( eventName, properties ) {
+							if ( eventName === 'dataChange' ) {
+								if ( self.refresh ) {
+									self.refresh( properties );
+								}
+							}
+						});
+
+						delete self.properties.model;
+					}
+				});
 			}
 
 			deferred.resolve();
