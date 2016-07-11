@@ -721,16 +721,16 @@ You can also emit view events from React components, like this:
         appObj.reactCmpts.Toolbar = React.createClass({
                 handleClick: function() {
                         var viewObj = vRap.Query.getObj( this.props.viewNamespace );
-                        
+                
                         viewObj.emit('btnClicked');
                 },
-        	render: function() {
-        		return (
-        		        <div> 
-        			        <input type="button" value="SUBMIT" onClick={this.handleClick} />
-        			</div>
-        		);
-        	}
+                render: function() {
+                        return (
+                                <div> 
+                                        <input type="button" value="SUBMIT" onClick={this.handleClick} />
+                                </div>
+                        );
+                }
         });
 
 ### Defining a controller
