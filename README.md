@@ -473,7 +473,7 @@ In the last step we created a model for registered users, now if we want to do s
                 return {
                         extend: 'Base.primitives.View',
                         init: function() {
-                                console.log( this.linked.model.properties.data ); // Prints the data object from the associated model
+                                console.log( this.linked.model.users.properties.data ); // Prints the data object from the associated model
                         },
                         refresh: function() {
                         }
@@ -496,6 +496,14 @@ It also possible to set one or more css classes to attach to the object's domEl,
 
         vRap.Actions.create( 'DemoApp.views.DataGrid', 'views.usersGrid', {
                 model: 'models.users', // The model must be instantiated before using it in a view
+                insertTo: $('#widgetsWrapper'),
+                style: 'grid-border'
+        });
+        
+You can also link more than one model to the view: 
+
+        vRap.Actions.create( 'DemoApp.views.DataGrid', 'views.usersGrid', {
+                model: [ 'models.users', 'models.roles' ],
                 insertTo: $('#widgetsWrapper'),
                 style: 'grid-border'
         });
@@ -601,7 +609,7 @@ Now, we have to define our view inside **"view.js"** file:
                                 template = $.templates("#gridBodyTmpl");
                                     
                                 self.gridBody.empty();
-                                self.gridBody.html( template.render( { users: self.linked.model.properties.data } ) );
+                                self.gridBody.html( template.render( { users: self.linked.model.users.properties.data } ) );
                         },
                         addRecord: function( element ) {
                                 this.form = this.properties.domEl.find('form');
@@ -642,7 +650,7 @@ In the previous example we used jsRender templating library, but feel free to us
                                 template = $.templates( self.properties.template );
                                     
                                 self.gridBody.empty();
-                                self.gridBody.html( template.render( { users: self.linked.model.properties.data } ) );
+                                self.gridBody.html( template.render( { users: self.linked.model.users.properties.data } ) );
                         },
                         addRecord: function( element ) {
                                 this.form = this.properties.domEl.find('form');
@@ -888,7 +896,7 @@ In the next example we'll create a module for the users administration grid:
                                 template = $.templates("#gridBodyTmpl");
                                     
                                 self.properties.gridBody.empty();
-                                self.properties.gridBody.html( template.render( { users: self.linked.model.properties.data } ) );
+                                self.properties.gridBody.html( template.render( { users: self.linked.model.users.properties.data } ) );
                         },
                         addRecord: function( element ) {
                                 this.properties.form = this.properties.domEl.find('form');
