@@ -715,6 +715,23 @@ You should built your React components inside a separated .JSX file, this file m
 The view will work as a wrapper for the React component, all its method can be acceded from the view by using the reference that was created for that specific component, like this:
 
         self.reactElements.DataGrid
+        
+You can also emit view events from React components, like this:
+
+        appObj.reactCmpts.Toolbar = React.createClass({
+                handleClick: function() {
+                        var viewObj = vRap.Query.getObj( this.props.viewNamespace );
+                        
+                        viewObj.emit('btnClicked');
+                },
+        	render: function() {
+        		return (
+        		        <div> 
+        			        <input type="button" value="SUBMIT" onClick={this.handleClick} />
+        			</div>
+        		);
+        	}
+        });
 
 ### Defining a controller
 
