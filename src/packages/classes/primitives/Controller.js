@@ -147,7 +147,9 @@ vRap.Actions.define( 'Base.primitives.Controller', (function() {
 		processViews: function( viewsObj ) {
 			var self = this;
 
-			self._setViews( viewsObj );
+			self._setViews( viewsObj ).then(function() {
+				self._setListeners();
+			});
 		},
 		showViews: function() {
 			var self = this;
