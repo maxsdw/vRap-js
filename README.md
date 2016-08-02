@@ -4,7 +4,7 @@ vRap-js
 ## Usage
 ***
 
-vRap.js is an object oriented Front-End framework to easily construct Rich Internet Apps with JavaScript. Using a MVC architecture approach, vRap-js provides a convenient way to give structure to your projects, it exposes an API that let you manage client-side data and synchronize that data with a persistence model, as well as create, extend and manage classes and objects with no effort. You can mix vRap.js with any other framework or library you prefer.
+vRap.js is an object oriented Front-End framework to easily construct Rich Internet Apps with JavaScript. Using a MVC architecture approach, vRap-js provides a convenient way to give structure to your projects, it exposes an API that let you manage client-side data and synchronize that data with a persistence model, as well as create, extend and manage classes and objects with no effort. You can mix vRap.js with any other framework or library you prefer.d
 
 ### Attach the vrap-js.min.js file to the project HTML
 
@@ -772,7 +772,7 @@ This is how you can define a controller:
 
 When defining a controller, you need to set which models and views will be associated to it, right after the controller is instantiated but before it starts, it will automatically create instances for the declared classes in the order specified by you inside the properties "models" and "views" ( Those classes must be defined separately ). The join of one or more views and models to a controller represents a module; following the high cohesion principle, you should associate views and models that are strongly related, they all must have the same purpose, in that order, a module holds the code for a single widget or functionality.
 
-You can also link a view to a controller inside init() method, this is specially useful when you need to generate an instance of a specific view using proporties defined in the controller, for instance:
+You can also link a view to a controller inside init() method, this is specially useful when you need to generate an instance of a specific view using properties defined in the controller, for instance:
 
         vRap.Actions.define( 'DemoApp.controllers.Users', (function() {
                 return {
@@ -780,12 +780,12 @@ You can also link a view to a controller inside init() method, this is specially
                         config: {},
                         init: function() {
                                 this.processViews({
-        				'DemoApp.views.DataGrid': {
-        					namespace: 'views.usersGrid',
-        					alias: 'usersGrid',
-        					insertTo: this.properties.insertTo
-        				}
-        			});
+                                        'DemoApp.views.DataGrid': {
+                                                namespace: 'views.usersGrid',
+                                                alias: 'usersGrid',
+                                                insertTo: this.properties.insertTo
+                                        }
+                                });
                         }
                 };
         })(), {} );
