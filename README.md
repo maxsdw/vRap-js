@@ -772,6 +772,24 @@ This is how you can define a controller:
 
 When defining a controller, you need to set which models and views will be associated to it, right after the controller is instantiated but before it starts, it will automatically create instances for the declared classes in the order specified by you inside the properties "models" and "views" ( Those classes must be defined separately ). The join of one or more views and models to a controller represents a module; following the high cohesion principle, you should associate views and models that are strongly related, they all must have the same purpose, in that order, a module holds the code for a single widget or functionality.
 
+You can also link a view to a controller inside init() method, this is specially useful when you need to generate an instance of a specific view using proporties defined in the controller, for instance:
+
+        vRap.Actions.define( 'DemoApp.controllers.Users', (function() {
+                return {
+                        extend: 'Base.primitives.Controller',
+                        config: {},
+                        init: function() {
+                                this.processViews({
+        				'DemoApp.views.DataGrid': {
+        					namespace: 'views.usersGrid',
+        					alias: 'usersGrid',
+        					insertTo: this.properties.insertTo
+        				}
+        			});
+                        }
+                };
+        })(), {} );
+
 All models and views associated to a controller must be assigned with an alias:
 
         models: {
