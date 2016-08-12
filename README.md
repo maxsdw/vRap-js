@@ -1156,8 +1156,8 @@ processComponents | Generate instances for the React components passed as argume
 
 Method | Description | Usage
 ------------ | ------------- | -------------
-hideViews | Hide all views associated to the controller | hideViews()
-showViews | Show all views associated to the controller | showViews()
+hideViews | Hide all views associated to the controller. Optionally you can pass the alias of a specific view as an argument in order to hide only that view. | hideViews( alias )
+showViews | Show all views associated to the controller. Optionally you can pass the alias of a specific view as an argument in order to show only that view | showViews( alias )
 processViews | Generate instances for the views passed as argument. | processViews( \<views configuration object\> )
 
 ### Interface
@@ -1208,6 +1208,7 @@ domEl | Specify the DOM element that wraps the view | jQuery Object
 insertTo | Specify the DOM element where to insert the view wrapper when domEl wasn't defined | jQuery Object
 model | Set the model associated to the view using its alias | String
 style | Set one or more css classes to attach to the object's domEl | String
+hidden | Render the view hidden by default | Boolean
 config.events | Configure event handlers for specific interactions | Object
 
 ### Controller
