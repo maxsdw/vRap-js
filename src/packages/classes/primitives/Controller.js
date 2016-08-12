@@ -151,19 +151,27 @@ vRap.Actions.define( 'Base.primitives.Controller', (function() {
 				self._setListeners();
 			});
 		},
-		showViews: function() {
+		showViews: function( alias ) {
 			var self = this;
 
-			_.each( self.linked.view, function( view ) {
-				view.show();
-			});
+			if ( !alias ) {
+				_.each( self.linked.view, function( view ) {
+					view.show();
+				});
+			} else {
+				self.linked.view[ alias ].show();
+			}
 		},
-		hideViews: function() {
+		hideViews: function( alias ) {
 			var self = this;
 
-			_.each( self.linked.view, function( view ) {
-				view.hide();
-			});
+			if ( !alias ) {
+				_.each( self.linked.view, function( view ) {
+					view.hide();
+				});
+			} else {
+				self.linked.view[ alias ].hide();
+			}
 		}
 	};
 })(), {} );

@@ -53,6 +53,10 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
 				});
 			}
 
+			if ( self.properties.hidden ) {
+				domEl.addClass('hide');
+			}
+
 			return deferred.promise();
 		},
 		_setTemplate: function() {
