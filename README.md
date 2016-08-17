@@ -1159,6 +1159,8 @@ Method | Description | Usage
 hideViews | Hide all views associated to the controller. Optionally you can pass the alias of a specific view as an argument in order to hide only that view. | hideViews( alias )
 showViews | Show all views associated to the controller. Optionally you can pass the alias of a specific view as an argument in order to show only that view | showViews( alias )
 processViews | Generate instances for the views passed as argument. | processViews( \<views configuration object\> )
+onShowView | Callback method that is triggered every time a specific view is showed using showViews(). | onShowView( \<alias\> )
+onHideView | Callback method that is triggered every time a specific view is hidden using hideViews() .| onHideView( \<alias\> )
 
 ### Interface
 
