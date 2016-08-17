@@ -160,7 +160,13 @@ vRap.Actions.define( 'Base.primitives.Controller', (function() {
 				});
 			} else {
 				self.linked.view[ alias ].show();
+
+				if ( self.onShowView ) {
+					self.onShowView( alias );
+				}
 			}
+
+			return self;
 		},
 		hideViews: function( alias ) {
 			var self = this;
@@ -171,7 +177,13 @@ vRap.Actions.define( 'Base.primitives.Controller', (function() {
 				});
 			} else {
 				self.linked.view[ alias ].hide();
+
+				if ( self.onHideView ) {
+					self.onHideView( alias );
+				}
 			}
+
+			return self;
 		}
 	};
 })(), {} );
