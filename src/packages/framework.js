@@ -298,6 +298,7 @@
 					object,
 					splitNamespace,
 					iterator,
+					aliasIndex,
 					i = 0;
 
 				app = vRap.Query.getApp( vRap.Properties.activeApp );
@@ -317,12 +318,30 @@
 				};
 
 				if ( object ) {
+					if ( object._extend === 'Base.primitives.Controller' && object.linked ) {
+						delete app.references.controllers[ object.properties.alias ];
+
+						$.each( object.linked, function( index, link ) {
+							$.each( link, function( index, item ) {
+								self.destroy( item._objectNamespace );
+							});
+						});
+					}
+
 					if ( object.properties.domEl ) {
 						if ( object.reactElements && Object.keys( object.reactElements ).length > 0 ) {
 							ReactDOM.unmountComponentAtNode( object.properties.domEl[ 0 ] );
 						}
 						
 						object.properties.domEl.remove();
+					}
+
+					if ( object.properties.alias ) {
+						aliasIndex = app.references.usedAlias.indexOf( object.properties.alias );
+
+						if ( aliasIndex >= 0 ) {
+							app.references.usedAlias.splice( aliasIndex, 1 );
+						}
 					}
 
 					iterator( app.objManager, splitNamespace[ i ] );
