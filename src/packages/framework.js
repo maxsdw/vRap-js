@@ -1,4 +1,4 @@
-/* @preserve vRap.js JavaScript Framework v1.0.0 | Based on jQuery 2+ | https://github.com/maxsdw/vRap-js | (c) 2014, Jonathan Mauricio Sánchez Sanabria | Released under the MIT license */
+/* @preserve vRap.js JavaScript Framework v1.0.4 | Based on jQuery 2+ | https://github.com/maxsdw/vRap-js | (c) 2014, Jonathan Mauricio Sánchez Sanabria | Released under the MIT license */
 
 /**
  * Release Date: 2-12-2015

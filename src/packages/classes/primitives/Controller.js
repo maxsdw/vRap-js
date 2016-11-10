@@ -1,5 +1,5 @@
 /**
- * This file is part of vRap.JS JavaScript Framework v1.0.0
+ * This file is part of vRap.JS JavaScript Framework v1.0.4
  *
  * Copyright 2015, Jonathan Mauricio Sánchez Sanabria
  * Released under the MIT license

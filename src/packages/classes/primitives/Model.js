@@ -1,5 +1,5 @@
 /**
- * This file is part of vRap.JS JavaScript Framework v1.0.0
+ * This file is part of vRap.JS JavaScript Framework v1.0.4
  *
  * Copyright 2015, Jonathan Mauricio Sánchez Sanabria
  * Released under the MIT license
@@ -23,7 +23,7 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 				if ( self.config.url && $.type( self.config.url ) === 'function' ) {
 					self.config.url = self.config.url();
 				}
-				
+
 				deferred.resolve();
 			} else {
 				vRap.Msg.alert( localeText.noApiOrData + ' | ' + self._objectNamespace );
