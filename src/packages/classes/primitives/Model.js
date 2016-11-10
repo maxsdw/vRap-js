@@ -20,6 +20,10 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 				deferred = new $.Deferred();
 
 			if ( self.properties.data || self.config.url || self.config.api && !$.isEmptyObject( self.config.api ) ) {
+				if ( self.config.url && $.type( self.config.url ) === 'function' ) {
+					self.config.url = self.config.url();
+				}
+				
 				deferred.resolve();
 			} else {
 				vRap.Msg.alert( localeText.noApiOrData + ' | ' + self._objectNamespace );
