@@ -1138,9 +1138,9 @@ publish | Trigger a specific event previously subscribed | publish( \<event\>, \
 Method | Description | Usage
 ------------ | ------------- | -------------
 sendData | Send data to the server | sendData( \<data object\> )
-getData | Fetch the data | getData( \<callback object\> )
-sendRecord | Send a record | sendRecord( \<data object\>, \<callback object\> )
-deleteRecord | Delete a record | deleteRecord( \<record id\>, \<callback object\> )
+getData | Fetch the data | getData( \<configuration object\> )
+sendRecord | Send a record | sendRecord( \<data object\> )
+deleteRecord | Delete a record | deleteRecord( \<record id\> )
 
 ### View
 
