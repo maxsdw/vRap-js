@@ -31,7 +31,7 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 
 			return deferred.promise();
 		},
-		_ajaxCall: function( action, defaultMethod, dataObj ) {
+		_ajaxCall: function( action, defaultMethod, dataObj, beforeRefresh ) {
 			var self = this,
 				apiAction,
 				ajaxConf,
@@ -61,18 +61,18 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 					
 					$.when( callObject )
 						.done(function( data, textStatus, jqXHR ) {
-							self._updateModel( action, ( dataObj ) ? $.extend( dataObj, data ) : data );
+							self._updateModel( action, ( action === 'read' ) ? data : ( ( dataObj ) ? $.extend( dataObj, data ) : data  ), beforeRefresh);
 						});
 
 					return callObject;
 				} else {
-					return self._updateModel( action, dataObj );
+					return self._updateModel( action, dataObj, beforeRefresh );
 				}
 			} else {
 				vRap.Msg.alert( localeText.noApiUrl + ' | ' + self._objectNamespace );
 			}
 		},
-		_updateModel: function( action, data ) {
+		_updateModel: function( action, data, beforeRefresh ) {
 			var self = this,
 				dataObj,
 				deferred = new $.Deferred(),
@@ -104,16 +104,24 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 				});
 			}
 
-			deferred.resolve( dataObj );
+			if ( beforeRefresh ) {
+				$.when( beforeRefresh( data ) ).done(function() {
+					self.publish( 'dataChange', self.properties.data );
 
-			self.publish( 'dataChange', dataObj );
+					deferred.resolve( self.properties.data );
+				});
+			} else {
+				self.publish( 'dataChange', dataObj );
+
+				deferred.resolve( dataObj );
+			}
 
 			return deferred;
 		},
-		getData: function() {
+		getData: function( dataObj, beforeRefresh ) {
 			var self = this;
 
-			return self._ajaxCall( 'read', 'GET' );
+			return self._ajaxCall( 'read', 'GET', dataObj, beforeRefresh );
 		},
 		sendData: function( dataObj ) {
 			var self = this;
