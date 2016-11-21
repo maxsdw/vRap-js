@@ -1138,7 +1138,7 @@ publish | Trigger a specific event previously subscribed | publish( \<event\>, \
 Method | Description | Usage
 ------------ | ------------- | -------------
 sendData | Send data to the server | sendData( \<data object\> )
-getData | Fetch the data | getData( \<configuration object\> )
+getData | Fetch the data | getData( \<configuration object\>, \<before refresh function\> )
 sendRecord | Send a record | sendRecord( \<data object\> )
 deleteRecord | Delete a record | deleteRecord( \<record id\> )
 
