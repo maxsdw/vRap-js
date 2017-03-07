@@ -106,12 +106,12 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 
 			if ( beforeRefresh ) {
 				$.when( beforeRefresh( data ) ).done(function() {
-					self.publish( 'dataChange', self.properties.data );
+					self.publish( 'dataChange', self.properties.data, action );
 
 					deferred.resolve( self.properties.data );
 				});
 			} else {
-				self.publish( 'dataChange', dataObj );
+				self.publish( 'dataChange', dataObj, action );
 
 				deferred.resolve( dataObj );
 			}
