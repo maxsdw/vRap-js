@@ -1146,7 +1146,7 @@ deleteRecord | Delete a record | deleteRecord( \<record id\> )
 
 Method | Description | Usage
 ------------ | ------------- | -------------
-refresh | The method that runs every time the associated model changes | refresh()
+refresh | The method that runs every time the associated model changes | refresh( data, action )
 emit | Emits a specific event to be listened by a controller | refresh()
 hide | Hide the view DOM elements | hide()
 show | Show the view DOM elements | show()
