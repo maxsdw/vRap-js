@@ -121,10 +121,10 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
 					self.linked.model[ modelName ] = vRap.Query.getObj( model );
 
 					if ( self.linked.model[ modelName ] ) {
-						self.linked.model[ modelName ].subscribe(function( eventName, properties ) {
+						self.linked.model[ modelName ].subscribe(function( eventName, properties, action ) {
 							if ( eventName === 'dataChange' ) {
 								if ( self.refresh ) {
-									self.refresh( properties );
+									self.refresh( properties, action );
 								}
 							}
 						});

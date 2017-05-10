@@ -22,9 +22,9 @@ vRap.Actions.define( 'Base.primitives.Foundation', (function() {
 				this.observerList.splice( observerIndex, 1 );
 			}
 		},
-		publish: function( eventName, properties ) {
+		publish: function( eventName, properties, extraParams ) {
 			$.each( this.observerList, function( index, observer ) {
-				observer( eventName, properties );
+				observer( eventName, properties, extraParams );
 			});
 		}
 	};

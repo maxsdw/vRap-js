@@ -184,6 +184,9 @@ vRap.Actions.define( 'Base.primitives.Controller', (function() {
 			}
 
 			return self;
+		},
+		destroyItself: function() {
+			vRap.Actions.destroy( this._objectNamespace );
 		}
 	};
 })(), {} );
