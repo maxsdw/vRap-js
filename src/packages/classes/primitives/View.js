@@ -32,7 +32,7 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
 			} else {
 				domEl = self.properties.domEl = $('<div id="' + self.properties.id + '"></div>');
 
-				insertionNode = ( self.properties.insertTo ) ? $( self.properties.insertTo.selector ) : $('body');
+				insertionNode = ( self.properties.insertTo ) ? self.properties.insertTo : $('body');
 
 				if ( insertionNode instanceof jQuery && insertionNode.length > 0 ) {
 					insertionNode.append( domEl );   
