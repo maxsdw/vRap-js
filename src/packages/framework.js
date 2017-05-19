@@ -354,7 +354,7 @@
 
 			destroyByClass: function( classNamespace ) {
 				$.each( vRap.Query.getObjsByClass( classNamespace ), function( index, item ) {
-					vRap.destroy( item._objectNamespace );
+					vRap.Actions.destroy( item._objectNamespace );
 				});
 			},
 
