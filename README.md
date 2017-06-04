@@ -471,7 +471,7 @@ We need to send a GET request to the following URL:
 
         api/folders/{folder_id}/items
         
-Where {folder_id} needs to be replaced on the fly with the correct resource id everytime we want to fetch the data from the server, in that case we will need to specify a modal with the following characteristics:
+Where {folder_id} needs to be replaced on the fly with the correct resource id everytime we want to fetch data from the server, in that case we will need to specify a model with the following characteristics:
 
         vRap.Actions.define( 'DemoApp.models.FolderItems', (function() {
                 return {
@@ -490,7 +490,7 @@ Notice how we included "{folder_id}" inside the URL string, that will be replace
         
         folderItems.getData( {}, null, { folder_id: 1234 });
         
-Notice how we are passing in the third argument of the function, the template object, specifying the value to use as replacement for "folder_id", above instruction will execute a GET request to "api/folders/1234/items".
+Notice how we are passing the template object as third argument of the function, specifying the value to use as replacement for "folder_id" inside the URL, above instruction will execute a GET request to "api/folders/1234/items".
 
 ### Defining a view
 
