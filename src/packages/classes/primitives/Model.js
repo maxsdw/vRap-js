@@ -31,7 +31,7 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 
 			return deferred.promise();
 		},
-		_ajaxCall: function( action, defaultMethod, dataObj, beforeRefresh ) {
+		_ajaxCall: function( action, defaultMethod, dataObj, beforeRefresh, urlTemplate ) {
 			var self = this,
 				apiAction,
 				ajaxConf,
@@ -42,6 +42,12 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 
 				if ( self.config.sendJSON ) {
 					dataObj = JSON.stringify( dataObj );
+				}
+
+				if ( urlTemplate ) {
+					for ( var x in urlTemplate ) {
+						self.config.url = self.config.url.replace( '{' + x + '}', 0 );
+					}
 				}
 
 				if ( self.config.url || apiAction ) {
@@ -118,17 +124,17 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 
 			return deferred;
 		},
-		getData: function( dataObj, beforeRefresh ) {
+		getData: function( dataObj, beforeRefresh, urlTemplate ) {
 			var self = this;
 
-			return self._ajaxCall( 'read', 'GET', dataObj, beforeRefresh );
+			return self._ajaxCall( 'read', 'GET', dataObj, beforeRefresh, urlTemplate );
 		},
-		sendData: function( dataObj ) {
+		sendData: function( dataObj, urlTemplate ) {
 			var self = this;
 
-			return self._ajaxCall( 'sendData', 'POST', dataObj || self.properties.data );
+			return self._ajaxCall( 'sendData', 'POST', dataObj || self.properties.data, null, urlTemplate );
 		},
-		sendRecord: function( dataObj ) {
+		sendRecord: function( dataObj, urlTemplate ) {
 			var self = this,
 				action,
 				method;
@@ -147,9 +153,9 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 				method = 'POST';
 			}
 
-			return self._ajaxCall( action, method, dataObj );
+			return self._ajaxCall( action, method, dataObj, null, urlTemplate );
 		},
-		deleteRecord: function( recordId ) {
+		deleteRecord: function( recordId, urlTemplate ) {
 			var self = this,
 				dataObj = null;
 
@@ -161,7 +167,7 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 				};
 			}
 
-			return self._ajaxCall( 'delete', 'DELETE', dataObj );
+			return self._ajaxCall( 'delete', 'DELETE', dataObj, null, urlTemplate );
 		}
 	};
 })(), {} );
