@@ -451,7 +451,7 @@ Finally, in models you are able to setup jQuery.ajax() extra settings, use "ajax
                         config: {
                                 url: 'api/active_user',
                                 sendMethod: 'POST',
-                                ajaxConf: {
+              api/active_user                  ajaxConf: {
                                         dataType: 'xml',
                                         contentType: 'application/x-www-form-urlencoded; charset=UTF-8'
                                 }
@@ -461,7 +461,36 @@ Finally, in models you are able to setup jQuery.ajax() extra settings, use "ajax
                 }
         })(), {} );
 
-*Note:* You can perform CRUD and sendData operations with local data as well, in that case any AJAX call will be executed, but the model data will be updated. 
+*Note:* You can perform CRUD and sendData operations with local data as well, in that case any AJAX call will be executed, but the model data will be updated.
+
+#### URL templates
+
+You will find cases where the resource id needs to be included in the URL on POST, GET or DELETE methods, and not necesarily at the end, in order to properly included the id in the request URL, you will need to use URL templates, lets consider the following example:
+
+We need to send a GET request to the following URL:
+
+        api/folders/{folder_id}/items
+        
+Where {folder_id} needs to be replaced on the fly with the correct resource id everytime we want to fetch the data from the server, in that case we will need to specify a modal with the following characteristics:
+
+        vRap.Actions.define( 'DemoApp.models.FolderItems', (function() {
+                return {
+                        extend: 'Base.primitives.Model',
+                        config: {
+                                url: 'api/folders/{folder_id}/items'
+                        },
+                        init: function() {
+                        }
+                }
+        })(), {} );
+        
+Notice how we included "{folder_id}" inside the URL string, that will be replaced with the real resource id when executing the CRUD method, in the above example, to perform the GET request, what we will need to run is the following:
+
+        var folderItems = vRap.Actions.create( 'DemoApp.models.FolderItems', 'models.folderItems', {} );
+        
+        folderItems.getData( {}, null, { folder_id: 1234 });
+        
+Notice how we are passing in the third argument of the function, the template object, specifying the value to use as replacement for "folder_id", above instruction will execute a GET request to "api/folders/1234/items".
 
 ### Defining a view
 
