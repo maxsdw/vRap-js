@@ -48,16 +48,16 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 				if ( self.config.url ) {
 					if ( urlTemplate ) {
 						for ( var x in urlTemplate ) {
-							parsedUrl = self.config.url.replace( '{' + x + '}', urlTemplate[ x ] );
+							self.config.parsedUrl = self.config.parsedUrl.replace( '{' + x + '}', urlTemplate[ x ] );
 						}
 					} else {
-						parsedUrl = self.config.url.replace( /{(.*?)}\/|{(.*?)}/g, '' );
-					}
-				}
+						self.config.parsedUrl = self.config.parsedUrl.replace( /{(.*?)}\/|{(.*?)}/g, '' );
+  					}
+  				}
 
-				if ( parsedUrl || apiAction ) {
+				if ( self.config.parsedUrl || apiAction ) {
 					ajaxConf = {
-						url: ( apiAction ) ? apiAction.url : parsedUrl,
+						url: ( apiAction ) ? apiAction.url : self.config.parsedUrl,
 						method: ( apiAction ) ? apiAction.method : ( action === 'sendData' && self.config.sendMethod ) ? self.config.sendMethod : defaultMethod,
 						data: ( dataObj ) ? dataObj : null 
 					};
@@ -132,10 +132,14 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 		getData: function( dataObj, beforeRefresh, urlTemplate ) {
 			var self = this;
 
+			self.config.parsedUrl = self.config.url;
+
 			return self._ajaxCall( 'read', 'GET', dataObj, beforeRefresh, urlTemplate );
 		},
 		sendData: function( dataObj, urlTemplate ) {
 			var self = this;
+
+			self.config.parsedUrl = self.config.url;
 
 			return self._ajaxCall( 'sendData', 'POST', dataObj || self.properties.data, null, urlTemplate );
 		},
@@ -144,12 +148,14 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 				action,
 				method;
 
+			self.config.parsedUrl = self.config.url;
+
 			if ( dataObj && dataObj.id ) {
 				action = 'update';
 				method = 'PUT';
 
 				if ( !self.config.forceParamId ) {
-					self.config.url = self.config.url + '/' + dataObj.id;
+					self.config.parsedUrl = self.config.url + '/' + dataObj.id;
 
 					delete dataObj.id;
 				}
@@ -164,8 +170,10 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 			var self = this,
 				dataObj = null;
 
+			self.config.parsedUrl = self.config.url;
+
 			if ( !self.config.forceParamId ) {
-				self.config.url = self.config.url + '/' + recordId;
+				self.config.parsedUrl = self.config.url + '/' + recordId;
 			} else {
 				dataObj = {
 					id: recordId
