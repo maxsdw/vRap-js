@@ -35,7 +35,8 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 			var self = this,
 				apiAction,
 				ajaxConf,
-				callObject;
+				callObject,
+				parsedUrl;
 
 			if ( self.properties.booted ) {
 				apiAction = ( self.config.api && self.config.api[ action ] ) ? self.config.api[ action ] : false;
@@ -44,15 +45,19 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 					dataObj = JSON.stringify( dataObj );
 				}
 
-				if ( urlTemplate ) {
-					for ( var x in urlTemplate ) {
-						self.config.url = self.config.url.replace( '{' + x + '}', 0 );
+				if ( self.config.url ) {
+					if ( urlTemplate ) {
+						for ( var x in urlTemplate ) {
+							parsedUrl = self.config.url.replace( '{' + x + '}', urlTemplate[ x ] );
+						}
+					} else {
+						parsedUrl = self.config.url.replace( /{(.*?)}\/|{(.*?)}/g, '' );
 					}
 				}
 
-				if ( self.config.url || apiAction ) {
+				if ( parsedUrl || apiAction ) {
 					ajaxConf = {
-						url: ( apiAction ) ? apiAction.url : self.config.url,
+						url: ( apiAction ) ? apiAction.url : parsedUrl,
 						method: ( apiAction ) ? apiAction.method : ( action === 'sendData' && self.config.sendMethod ) ? self.config.sendMethod : defaultMethod,
 						data: ( dataObj ) ? dataObj : null 
 					};
