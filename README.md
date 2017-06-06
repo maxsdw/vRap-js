@@ -1227,6 +1227,7 @@ Property | Description | Type
 data | Insert data directly to the object | Object
 config.url | Specify a URL to use when performing data synchronization, this parameter can also be a function that returns the value for the URL | String
 config.forceParamId | Include the record ID inside data payload when sending it to the server | Boolean
+config.preventUpdate | Prevent the model to auto update its own data on POST, PUT and DELETE | Boolean
 config.sendJSON | Force data to be sent as a JSON string | Boolean
 config.ajaxConf | Receives an object with jQuer.ajax() extra settings | Object
 config.api | Specify a different URL for each one of the synchronization methods (create, read, update, delete) | Object

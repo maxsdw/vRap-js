@@ -93,26 +93,30 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 
 			if ( action === 'read' ) {
 				self.properties.data = dataObj;
-			} else if ( action === 'create' ) {
-				if ( $.type( self.properties.data ) === 'array' ) {
-					if ( self.config.prependRecord ) {
-						insertMethod = 'unshift';
-					}
+			}
 
-					self.properties.data[ insertMethod ]( dataObj );
+			if ( self.config.preventUpdate ) {
+				if ( action === 'create' ) {
+					if ( $.type( self.properties.data ) === 'array' ) {
+						if ( self.config.prependRecord ) {
+							insertMethod = 'unshift';
+						}
+
+						self.properties.data[ insertMethod ]( dataObj );
+					}
+				} else if ( action === 'update' ) {
+					$.each( self.properties.data, function( index, item ) {
+						if ( item.id === data.id ) {
+							$.extend( self.properties.data[ index ], data );
+						}
+					});
+				} else if ( action === 'delete' ) {
+					$.each( self.properties.data, function( index, item ) {
+						if ( item.id === data.id ) {
+							elf.properties.data.splice( index, 1 );
+						}
+					});
 				}
-			} else if ( action === 'update' ) {
-				$.each( self.properties.data, function( index, item ) {
-					if ( item.id === data.id ) {
-						$.extend( self.properties.data[ index ], data );
-					}
-				});
-			} else if ( action === 'delete' ) {
-				$.each( self.properties.data, function( index, item ) {
-					if ( item.id === data.id ) {
-						elf.properties.data.splice( index, 1 );
-					}
-				});
 			}
 
 			if ( beforeRefresh ) {
