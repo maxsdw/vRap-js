@@ -492,6 +492,41 @@ Notice how we included "{folder_id}" inside the URL string, that will be replace
         
 Notice how we are passing the template object as third argument of the function, specifying the value to use as replacement for "folder_id" inside the URL, above instruction will execute a GET request to "api/folders/1234/items".
 
+#### Arguments for model actions
+
+The following is the list of arguments that the model actions receives according to each case:
+
+##### getData
+
+* dataObj: A data object to be included in the server call,  properties will be included as query params in the call URL.
+* beforeRefresh: A function to be executed before publishing the refresh event for all associated observers, including the views.
+* urlTemplate: An object including the values to use in replacement for the specified variables in the URL template.
+* preventPublish: A boolean value specifying if we want to prevent publishing the refresh event for all associated observers, default as false.
+* context: An object to be included as an arguments when delivering the updated data into obeservers.
+
+##### sendData
+
+* dataObj: A data object to be included in the server call, properties will be included inside the body/payload of the call.
+* urlTemplate: An object including the values to use in replacement for the specified variables in the URL template.
+* preventPublish: A boolean value specifying if we want to prevent publishing the refresh event for all associated observers, default as false.
+* context: An object to be included as an arguments when delivering the updated data into obeservers.
+
+##### sendRecord
+
+* dataObj: A data object to be included in the server call, properties will be included inside the body/payload of the call.
+* urlTemplate: An object including the values to use in replacement for the specified variables in the URL template.
+* stringify: A boolean value specifying if we want to convert to a JSON string the object passed inside dataObj property.
+* operationOverride: An object of this form "{ action: 'create', method: 'POST' }" to force executing the call using that specific operation and not the defined by the system automatically.  
+* preventPublish: A boolean value specifying if we want to prevent publishing the refresh event for all associated observers, default as false.
+* context: An object to be included as an arguments when delivering the updated data into obeservers.
+
+##### deleteRecord
+
+* recordId: A string including the ID of the entry we want to delete.
+* urlTemplate: An object including the values to use in replacement for the specified variables in the URL template.
+* preventPublish: A boolean value specifying if we want to prevent publishing the refresh event for all associated observers, default as false.
+* context: An object to be included as an arguments when delivering the updated data into obeservers.
+
 ### Defining a view
 
 The view is the visible part of the application, it involves all the user interface components necessary to interact with the data and complete a particular task.
@@ -504,7 +539,7 @@ In the last step we created a model for registered users, now if we want to do s
                         init: function() {
                                 console.log( this.linked.model.users.properties.data ); // Prints the data object from the associated model
                         },
-                        refresh: function() {
+                        refresh: function( data, action, alias, context ) {
                         }
                 };
         })(), {} );
@@ -553,7 +588,7 @@ In order to create an event handler for a specific user interaction, vRap provid
                         addRecord: function( element, methodName, event ) {
                                 ...
                         },
-                        refresh: function() {
+                        refresh: function( data, action, alias, context ) {
                         }
                 };
         })(), {} );
@@ -567,7 +602,12 @@ Also notice that a method named as **"refresh"** (Optional) can be defined insid
 * sendRecord()
 * deleteRecord()
 
-This is very useful if we want to automatically refresh/update the UI on data changes.
+This is very useful if we want to automatically refresh/update the UI on data changes, the refresh method receives be executed with four arguments:
+
+* data: The updated data delivered by the server.
+* action: The actions that was executed: create, read, update or delete.
+* alias: The alias of the model that is delivering the data.
+* context: The context object that was specified when executing the action in the model, if any.
 
 In the next example we'll render a table using the data in the model previously defined. This is how the **"index.html"** file should look like:
 
@@ -643,7 +683,7 @@ Now, we have to define our view inside **"view.js"** file:
                         addRecord: function( element ) {
                                 this.form = this.properties.domEl.find('form');
                         },
-                        refresh: function() {
+                        refresh: function( data, action, alias, context ) {
                                 this.renderBody();
                         }
                 };
@@ -684,7 +724,7 @@ In the previous example we used jsRender templating library, but feel free to us
                         addRecord: function( element ) {
                                 this.form = this.properties.domEl.find('form');
                         },
-                        refresh: function() {
+                        refresh: function( data, action, alias, context ) {
                                 this.renderBody();
                         }
                 };
@@ -719,7 +759,7 @@ A view can also be used with React library, in that scenario, you can specify th
         
         			return deferred.promise();
         		},
-        		refresh: function() {
+        		refresh: function( data, action, alias, context ) {
         		},
         		render: function() {
         			var self = this,
@@ -949,7 +989,7 @@ In the next example we'll create a module for the users administration grid:
                                 this.properties.form = this.properties.domEl.find('form');
                                 this.emit('addBtnClicked');
                         },
-                        refresh: function() {
+                        refresh: function( data, action, alias, context ) {
                                 this.renderBody();
                         }
                 };
@@ -996,7 +1036,7 @@ Here is an example of interfaces usage:
                         onHideList: function( element ) {
                                 this.emit('hideListBtnClicked'); // Emits a generic event
                         },
-                        refresh: function() {
+                        refresh: function( data, action, alias, context ) {
                                 ...
                         }
                 };
@@ -1043,7 +1083,7 @@ Here is an example of interfaces usage:
                         hide: function() {
                                 this.properties.domEl.addClass('hidden');
                         },
-                        refresh: function() {
+                        refresh: function( data, action, alias, context ) {
                                 ...
                         }
                 };
