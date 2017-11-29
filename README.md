@@ -618,7 +618,7 @@ In the next example we'll render a table using the data in the model previously 
                         
                         <script src="js/libs/jquery-2.1.1.min.js"></script>
                         <script src="js/libs/jsviews.min.js"></script>
-                        <script src="js/libs/vrap-js-1.0.0.min.js"></script>
+                        <script src="js/libs/vrap-js-1.2.0.min.js"></script>
                         <script src="js/view.js"></script>
                 </head>
                 <body>
@@ -671,20 +671,20 @@ Now, we have to define our view inside **"view.js"** file:
                                 this.gridBody = this.properties.domEl.find('.grid-body');
                                 this.renderBody();
                         },
-                        renderBody: function() {
+                        renderBody: function( data ) {
                                 var self = this,
                                     template;
                                     
                                 template = $.templates("#gridBodyTmpl");
                                     
                                 self.gridBody.empty();
-                                self.gridBody.html( template.render( { users: self.linked.model.users.properties.data } ) );
+                                self.gridBody.html( template.render( { users: data } ) );
                         },
                         addRecord: function( element ) {
                                 this.form = this.properties.domEl.find('form');
                         },
                         refresh: function( data, action, alias, context ) {
-                                this.renderBody();
+                                this.renderBody( data );
                         }
                 };
         })(), {} );
@@ -712,20 +712,20 @@ In the previous example we used jsRender templating library, but feel free to us
                         init: function() {
                                 this.renderBody();
                         },
-                        renderBody: function() {
+                        renderBody: function( data ) {
                                 var self = this,
                                     template;
                                     
                                 template = $.templates( self.properties.template );
                                     
                                 self.gridBody.empty();
-                                self.gridBody.html( template.render( { users: self.linked.model.users.properties.data } ) );
+                                self.gridBody.html( template.render( { users: data } ) );
                         },
                         addRecord: function( element ) {
                                 this.form = this.properties.domEl.find('form');
                         },
                         refresh: function( data, action, alias, context ) {
-                                this.renderBody();
+                                this.renderBody( data );
                         }
                 };
         })(), {} );
@@ -760,30 +760,42 @@ A view can also be used with React library, in that scenario, you can specify th
         			return deferred.promise();
         		},
         		refresh: function( data, action, alias, context ) {
+                                this.reactInstances.DataGrid.updateState( data, action, alias, context );
         		},
-        		render: function() {
-        			var self = this,
-        				deferred = new $.Deferred();
-        
-        			ReactDOM.render(
-        				self.reactElements.DataGrid,
-        				self.properties.domEl[ 0 ]
-        			);
-        
-        			deferred.resolve();
+        		render: function() {                                
+                                var self = this,
+                                        deferred = new $.Deferred();
+
+                                self.reactInstances.DataGrid = ReactDOM.render(
+                                        self.reactElements.DataGrid,
+                                        self.properties.domEl[ 0 ],
+                                        function() {
+                                                deferred.resolve();
+                                        }
+                                );
+
+                                return deferred.promise();
         		}
         	};
         })(), {} );
 
 You should built your React components inside a separated .JSX file, this file must be added in the same folder your view components is.
-
-        var appObj = vRap.Query.getApp( vRap.Properties.activeApp );
         
-        appObj.reactCmpts.DataGrid = React.createClass({
+        vRap.Query.getApp( vRap.Properties.activeApp ).reactCmpts.DataGrid = React.createClass({
+                getInitialState: function() {
+                        return {
+                                gridData: {}
+                        };
+                },
+                updateState: function( data, action, alias, context ) {
+                        this.setState({
+                                gridData: data
+			});
+                },
         	render: function() {
         		return (
         			<div className="dataGrid">
-        				Hello, world! I am a grid.
+        				Hello, world! I am a grid and this is my data: {this.state.gridData}
         			</div>
         		);
         	}
@@ -791,15 +803,18 @@ You should built your React components inside a separated .JSX file, this file m
 
 The view will work as a wrapper for the React component, all its method can be acceded from the view by using the reference that was created for that specific component, like this:
 
-        self.reactElements.DataGrid
+        self.reactInstances.DataGrid
         
 You can also emit view events from React components, like this:
 
         appObj.reactCmpts.Toolbar = React.createClass({
+                getInitialState: function() {
+                        this._viewInstance = vRap.Query.getObj( this.props.viewNamespace );
+                        
+                        return {};
+                },
                 handleClick: function() {
-                        var viewObj = vRap.Query.getObj( this.props.viewNamespace );
-                
-                        viewObj.emit('btnClicked');
+                        this._viewInstance.emit('btnClicked');
                 },
                 render: function() {
                         return (
@@ -976,21 +991,21 @@ In the next example we'll create a module for the users administration grid:
                                 this.properties.gridBody = this.properties.domEl.find('.grid-body');
                                 this.renderBody();
                         },
-                        renderBody: function() {
+                        renderBody: function( data ) {
                                 var self = this,
                                     template;
                                     
                                 template = $.templates("#gridBodyTmpl");
                                     
                                 self.properties.gridBody.empty();
-                                self.properties.gridBody.html( template.render( { users: self.linked.model.users.properties.data } ) );
+                                self.properties.gridBody.html( template.render( { users: data } ) );
                         },
                         addRecord: function( element ) {
                                 this.properties.form = this.properties.domEl.find('form');
                                 this.emit('addBtnClicked');
                         },
                         refresh: function( data, action, alias, context ) {
-                                this.renderBody();
+                                this.renderBody( data );
                         }
                 };
         })(), {} );
