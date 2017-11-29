@@ -4,7 +4,7 @@ vRap-js
 ## Usage
 ***
 
-vRap.js is an object oriented Front-End framework to easily construct Rich Internet Apps with JavaScript. Using a MVC architecture approach, vRap-js provides a convenient way to give structure to your projects, it exposes an API that let you manage client-side data and synchronize that data with a persistence model, as well as create, extend and manage classes and objects with no effort. You can mix vRap.js with any other framework or library you prefer.d
+vRap.js is an object oriented Front-End framework to easily construct Rich Internet Apps with JavaScript. Using a MVC architecture approach, vRap-js provides a convenient way to give structure to your projects, it exposes an API that let you manage client-side data and synchronize that data with a persistence model, as well as create, extend and manage classes and objects with no effort. You can mix vRap.js with any other framework or library you prefer.
 
 ### Attach the vrap-js.min.js file to the project HTML
 
