@@ -8,7 +8,7 @@ vRap.js is an object oriented Front-End framework to easily construct Rich Inter
 
 ### Attach the vrap-js.min.js file to the project HTML
 
-        <script src="js/vrap-js-1.0.0.min.js"></script>
+        <script src="js/vrap-js-1.2.0.min.js"></script>
 
 ### Create an application instance
 
