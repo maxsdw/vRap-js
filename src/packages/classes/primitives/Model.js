@@ -31,12 +31,12 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 
 			return deferred.promise();
 		},
-		_ajaxCall: function( action, defaultMethod, dataObj, beforeRefresh, urlTemplate ) {
+		_ajaxCall: function( action, defaultMethod, dataObj, beforeRefresh, urlTemplate, preventPublish, context ) {
 			var self = this,
 				apiAction,
 				ajaxConf,
 				callObject,
-				parsedUrl;
+				queryParams = '?';
 
 			if ( self.properties.booted ) {
 				apiAction = ( self.config.api && self.config.api[ action ] ) ? self.config.api[ action ] : false;
@@ -48,19 +48,34 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 				if ( self.config.url ) {
 					if ( urlTemplate ) {
 						for ( var x in urlTemplate ) {
-							self.config.parsedUrl = self.config.parsedUrl.replace( '{' + x + '}', urlTemplate[ x ] );
+							self.config.parsedUrl = self.config.parsedUrl.replace( '{' + x + '}', urlTemplate[ x ] === null ? '' : urlTemplate[ x ] );
 						}
-					} else {
-						self.config.parsedUrl = self.config.parsedUrl.replace( /{(.*?)}\/|{(.*?)}/g, '' );
-  					}
-  				}
+					}
+
+					self.config.parsedUrl = self.config.parsedUrl
+						.replace( /{(.*?)}\/|{(.*?)}/g, '' )
+						.replace( /([^:]\/)\/+/g, '$1' );
+
+					if ( self.config.forceQueryParams && $.type( self.config.forceQueryParams ) === 'object' ) {
+						$.each( self.config.forceQueryParams, function( key, value ) {
+							queryParams += ( key + '=' + value );
+						});
+
+						self.config.parsedUrl += queryParams;
+					}
+				}
 
 				if ( self.config.parsedUrl || apiAction ) {
 					ajaxConf = {
 						url: ( apiAction ) ? apiAction.url : self.config.parsedUrl,
 						method: ( apiAction ) ? apiAction.method : ( action === 'sendData' && self.config.sendMethod ) ? self.config.sendMethod : defaultMethod,
-						data: ( dataObj ) ? dataObj : null 
+						data: ( dataObj ) ? dataObj : null,
+						context: context
 					};
+
+					if ( self.config.dynamicHeaders ) {
+						ajaxConf.headers = self.config.dynamicHeaders[ ajaxConf.method ];
+					}
 
 					if ( self.config.ajaxConf.method ) {
 						delete self.config.ajaxConf.method;
@@ -72,18 +87,18 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 					
 					$.when( callObject )
 						.done(function( data, textStatus, jqXHR ) {
-							self._updateModel( action, ( action === 'read' ) ? data : ( ( dataObj ) ? $.extend( dataObj, data ) : data  ), beforeRefresh);
+							self._updateModel( action, ( action === 'read' ) ? data : ( ( dataObj ) ? $.extend( dataObj, data ) : data  ), beforeRefresh, preventPublish, this );
 						});
 
 					return callObject;
 				} else {
-					return self._updateModel( action, dataObj, beforeRefresh );
+					return self._updateModel( action, dataObj, beforeRefresh, preventPublish );
 				}
 			} else {
 				vRap.Msg.alert( localeText.noApiUrl + ' | ' + self._objectNamespace );
 			}
 		},
-		_updateModel: function( action, data, beforeRefresh ) {
+		_updateModel: function( action, data, beforeRefresh, preventPublish, context ) {
 			var self = this,
 				dataObj,
 				deferred = new $.Deferred(),
@@ -95,7 +110,7 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 				self.properties.data = dataObj;
 			}
 
-			if ( self.config.preventUpdate ) {
+			if ( !self.config.preventUpdate ) {
 				if ( action === 'create' ) {
 					if ( $.type( self.properties.data ) === 'array' ) {
 						if ( self.config.prependRecord ) {
@@ -113,78 +128,84 @@ vRap.Actions.define( 'Base.primitives.Model', (function() {
 				} else if ( action === 'delete' ) {
 					$.each( self.properties.data, function( index, item ) {
 						if ( item.id === data.id ) {
-							elf.properties.data.splice( index, 1 );
+							self.properties.data.splice( index, 1 );
 						}
 					});
 				}
 			}
 
 			if ( beforeRefresh ) {
-				$.when( beforeRefresh( data ) ).done(function() {
-					self.publish( 'dataChange', self.properties.data, action );
+				$.when( beforeRefresh( data, self ) ).done(function() {
+					if ( !preventPublish ) {
+						self.publish( 'dataChange', self.properties.data, action, self.properties.alias, context );
+					}
 
 					deferred.resolve( self.properties.data );
 				});
 			} else {
-				self.publish( 'dataChange', dataObj, action );
+				if ( !preventPublish ) {
+					self.publish( 'dataChange', dataObj, action, self.properties.alias, context );
+				}
 
 				deferred.resolve( dataObj );
 			}
 
-			return deferred;
+			return deferred.promise;
 		},
-		getData: function( dataObj, beforeRefresh, urlTemplate ) {
-			var self = this;
+		getData: function( dataObj, beforeRefresh, urlTemplate, preventPublish, context ) {
+			this.config.parsedUrl = this.config.url;
 
-			self.config.parsedUrl = self.config.url;
-
-			return self._ajaxCall( 'read', 'GET', dataObj, beforeRefresh, urlTemplate );
+			return this._ajaxCall( 'read', 'GET', dataObj, beforeRefresh, urlTemplate, preventPublish, context );
 		},
-		sendData: function( dataObj, urlTemplate ) {
-			var self = this;
+		sendData: function( dataObj, urlTemplate, preventPublish, context ) {
+			this.config.parsedUrl = this.config.url;
 
-			self.config.parsedUrl = self.config.url;
-
-			return self._ajaxCall( 'sendData', 'POST', dataObj || self.properties.data, null, urlTemplate );
+			return this._ajaxCall( 'sendData', 'POST', dataObj || this.properties.data, null, urlTemplate, preventPublish, context );
 		},
-		sendRecord: function( dataObj, urlTemplate ) {
+		sendRecord: function( dataObj, urlTemplate, stringify, operationOverride, preventPublish, context ) {
 			var self = this,
-				action,
+				operation = {},
 				method;
 
 			self.config.parsedUrl = self.config.url;
 
 			if ( dataObj && dataObj.id ) {
-				action = 'update';
-				method = 'PUT';
+				operation = { action: 'update', method: 'PUT' };
 
 				if ( !self.config.forceParamId ) {
 					self.config.parsedUrl = self.config.url + '/' + dataObj.id;
-
-					delete dataObj.id;
 				}
 			} else {
-				action = 'create';
-				method = 'POST';
+				operation = { action: 'create', method: 'POST' };
 			}
 
-			return self._ajaxCall( action, method, dataObj, null, urlTemplate );
+			if ( operationOverride && $.type( operationOverride ) === 'object' ) {
+				operation = operationOverride;
+			} 
+
+			if ( stringify ) {
+				dataObj = JSON.stringify( dataObj );
+			}
+
+			return self._ajaxCall( operation.action, operation.method, dataObj, null, urlTemplate, preventPublish, context );
 		},
-		deleteRecord: function( recordId, urlTemplate ) {
+		deleteRecord: function( recordId, urlTemplate, preventPublish, context ) {
 			var self = this,
 				dataObj = null;
 
 			self.config.parsedUrl = self.config.url;
 
-			if ( !self.config.forceParamId ) {
-				self.config.parsedUrl = self.config.url + '/' + recordId;
-			} else {
-				dataObj = {
-					id: recordId
-				};
+			if ( recordId ) {
+				if ( !self.config.forceParamId ) {
+					self.config.parsedUrl = self.config.url + '/' + recordId;
+				} else {
+					dataObj = {
+						id: recordId
+					};
+				}
 			}
 
-			return self._ajaxCall( 'delete', 'DELETE', dataObj, null, urlTemplate );
+			return self._ajaxCall( 'delete', 'DELETE', dataObj, null, urlTemplate, preventPublish, context );
 		}
 	};
 })(), {} );
