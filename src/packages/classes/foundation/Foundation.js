@@ -16,15 +16,34 @@ vRap.Actions.define( 'Base.primitives.Foundation', (function() {
 			this.observerList.push( observer );
 		},
 		unsubscribe: function( observer ) {
-			var observerIndex = this.observerList.indexOf( observer, 0 );
+			var type = $.type( observer ),
+				observerIndex;
 
-			if ( observerIndex >= 0 ) {
-				this.observerList.splice( observerIndex, 1 );
+			if ( type === 'string' ) {
+				this.observerList = $.grep(this.observerList, function ( listItem, index ) {
+					if ( listItem.key === observer ) {
+						return false;
+					}
+
+					return true;
+				});
+			} else if ( type === 'function' ) {
+				observerIndex = this.observerList.indexOf( observer, 0 );
+
+				if ( observerIndex >= 0 ) {
+					this.observerList.splice( observerIndex, 1 );
+				}
 			}
 		},
-		publish: function( eventName, properties, extraParams ) {
+		publish: function( eventName, properties, extraParams, alias, context ) {
 			$.each( this.observerList, function( index, observer ) {
-				observer( eventName, properties, extraParams );
+				var type = $.type( observer );
+
+				if ( type === 'object' ) {
+					observer.callback( eventName, properties, extraParams, alias, context );
+				} else if ( type === 'function' ) {
+					observer( eventName, properties, extraParams, alias, context );
+				}
 			});
 		}
 	};

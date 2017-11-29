@@ -48,7 +48,7 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
 					domEl.attr( 'class', self.properties.style );
 				}
 
-				$.when( self._setTemplate(), self._setReactComponents, self._setModel(), self._setEvents() ).done(function() {
+				$.when( self._setTemplate(), self._setReactComponents(), self._setModel(), self._setEvents() ).done(function() {
 					deferred.resolve();
 				});
 			}
@@ -121,13 +121,7 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
 					self.linked.model[ modelName ] = vRap.Query.getObj( model );
 
 					if ( self.linked.model[ modelName ] ) {
-						self.linked.model[ modelName ].subscribe(function( eventName, properties, action ) {
-							if ( eventName === 'dataChange' ) {
-								if ( self.refresh ) {
-									self.refresh( properties, action );
-								}
-							}
-						});
+						self.linked.model[ modelName ].subscribe( { key: self._objectNamespace, callback: self._observer.bind( self ) } );
 
 						delete self.properties.model;
 					}
@@ -135,6 +129,23 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
 			}
 
 			deferred.resolve();
+		},
+		_unsubscribeModel: function() {
+			var self = this,
+				deferred = new $.Deferred();
+
+			$.each( self.linked.model, function( index, model ) {
+				model.unsubscribe( self._objectNamespace );
+			});
+
+			deferred.resolve();
+		},
+		_observer: function( eventName, properties, action, alias, context ) {
+			if ( eventName === 'dataChange' ) {
+				if ( this.refresh ) {
+					this.refresh( properties, action, alias, context );
+				}
+			}
 		},
 		_setEvents: function() {
 			var self = this,
@@ -174,8 +185,10 @@ vRap.Actions.define( 'Base.primitives.View', (function() {
 		},
 		emit: function( eventName, properties ) {
 			var self = this;
-
-			self.publish( eventName, properties );
+			
+			setTimeout(function() {
+				self.publish( eventName, properties );
+			}, 0);
 		}
 	};
 })(), {} );
