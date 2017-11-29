@@ -602,7 +602,7 @@ Also notice that a method named as **"refresh"** (Optional) can be defined insid
 * sendRecord()
 * deleteRecord()
 
-This is very useful if we want to automatically refresh/update the UI on data changes, the refresh method receives be executed with four arguments:
+This is very useful if we want to automatically refresh/update the UI on data changes, the refresh method receives four arguments:
 
 * data: The updated data delivered by the server.
 * action: The actions that was executed: create, read, update or delete.
